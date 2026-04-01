@@ -1,0 +1,22 @@
+# Arquivos sensíveis — NUNCA subir pro GitHub
+.env
+usuarios.json
+
+# Planilhas de importação
+*.xlsx
+*.csv
+
+# Arquivos temporários
+__pycache__/
+*.py[cod]
+*.pyo
+.DS_Store
+
+# Scripts de uso único (migração e importação)
+migrar_para_supabase.py
+importar_excel.py
+criar_tabelas.sql
+teste_importacao.xlsx
+
+# Pasta de anexos (gerada em runtime, não versionar)
+anexos/

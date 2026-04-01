@@ -1,0 +1,1176 @@
+{
+  "pdcas": [
+    {
+      "id": "fc5744b2-4ec6-41f1-8c09-31209240d53e",
+      "titulo": "Projeto dos motores",
+      "classificacao": "Sobrevivência",
+      "responsavel": "guilherme",
+      "email_responsavel": "guilherme.neto@unilux.com.br",
+      "email_gerente": "gabriel.rodrigues@unilux.com.br",
+      "prazo": "2026-03-30",
+      "status": "Concluído",
+      "planejar": {
+        "descricao": "zzzzz",
+        "topicos": [
+          "zzzzzzzz"
+        ],
+        "objetivo": "zzzz",
+        "responsavel": "Guilherme",
+        "prazo": "2026-04-01"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [
+        {
+          "data": "2026-03-25T15:49:29.066146",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "zzzzzzzz",
+              "comentario": "foi visto"
+            }
+          ],
+          "observacao_geral": "guilherme é bonito e não tem muito que ser feito diferente disso",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "zzzzz",
+            "topicos": "zzzzzzzz",
+            "objetivo": "zzzz",
+            "responsavel": "Guilherme",
+            "prazo": "2026-04-01"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        },
+        {
+          "data": "2026-03-25T16:25:09.308415",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "zzzzzzzz",
+              "comentario": ""
+            }
+          ],
+          "observacao_geral": "",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "zzzzz",
+            "topicos": "zzzzzzzz",
+            "objetivo": "zzzz",
+            "responsavel": "Guilherme",
+            "prazo": "2026-04-01"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        },
+        {
+          "data": "2026-03-25T16:25:14.225146",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "zzzzzzzz",
+              "comentario": ""
+            }
+          ],
+          "observacao_geral": "",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "zzzzz",
+            "topicos": "zzzzzzzz",
+            "objetivo": "zzzz",
+            "responsavel": "Guilherme",
+            "prazo": "2026-04-01"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        },
+        {
+          "data": "2026-03-25T16:58:54.872178",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "zzzzzzzz",
+              "comentario": ""
+            }
+          ],
+          "observacao_geral": "",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "zzzzz",
+            "topicos": [
+              "zzzzzzzz"
+            ],
+            "objetivo": "zzzz",
+            "responsavel": "Guilherme",
+            "prazo": "2026-04-01"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        },
+        {
+          "data": "2026-03-25T16:59:39.182399",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "zzzzzzzz",
+              "comentario": ""
+            }
+          ],
+          "observacao_geral": "",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "zzzzz",
+            "topicos": [
+              "zzzzzzzz"
+            ],
+            "objetivo": "zzzz",
+            "responsavel": "Guilherme",
+            "prazo": "2026-04-01"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        },
+        {
+          "data": "2026-03-30T14:04:07.520827",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "zzzzzzzz",
+              "comentario": "asdsa"
+            }
+          ],
+          "observacao_geral": "sdfs",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "zzzzz",
+            "topicos": [
+              "zzzzzzzz"
+            ],
+            "objetivo": "zzzz",
+            "responsavel": "Guilherme",
+            "prazo": "2026-04-01"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        }
+      ],
+      "criado_em": "2026-03-25T15:20:12.459433",
+      "atualizado_em": "2026-03-30T14:04:07.520842"
+    },
+    {
+      "id": "8e3379ef-d96c-4ff6-8c44-d3313479c52b",
+      "titulo": "projeto dos motores",
+      "classificacao": "Sobrevivência",
+      "responsavel": "Camila",
+      "email_responsavel": "camila.guedes@unilux.com.br",
+      "email_gerente": "gabriel.rodrigues@unilux.com.br",
+      "prazo": "2026-04-29",
+      "status": "Aguardando Novo Ciclo",
+      "planejar": {
+        "descricao": "acho que aqui temos que xingar todos que estão envolvidos nessa atividade",
+        "topicos": [
+          "os envolvidos",
+          "os não envolvidos",
+          "os envolvides",
+          "e os avaianos"
+        ],
+        "objetivo": "principalmente quem não está envolvido nessa atividade",
+        "responsavel": "Camila",
+        "prazo": "2026-04-01"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [
+        {
+          "data": "2026-03-30T13:58:27.480366",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "os envolvidos",
+              "comentario": "gabriel"
+            },
+            {
+              "topico": "os não envolvidos",
+              "comentario": "guilherme"
+            },
+            {
+              "topico": "os envolvides",
+              "comentario": "camila"
+            },
+            {
+              "topico": "e os avaianos",
+              "comentario": "kkkkkk"
+            }
+          ],
+          "observacao_geral": "vimos que deu tudo certo nesse pdca",
+          "resultado": "Necessita Revisão",
+          "planejar": {
+            "descricao": "acho que aqui temos que xingar todos que estão envolvidos nessa atividade",
+            "topicos": [
+              "os envolvidos",
+              "os não envolvidos",
+              "os envolvides",
+              "e os avaianos"
+            ],
+            "objetivo": "principalmente quem não está envolvido nessa atividade",
+            "responsavel": "Camila",
+            "prazo": "2026-04-01"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        },
+        {
+          "data": "2026-03-30T13:59:55.747389",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "os envolvidos",
+              "comentario": "youtube"
+            },
+            {
+              "topico": "os não envolvidos",
+              "comentario": "facebook"
+            },
+            {
+              "topico": "os envolvides",
+              "comentario": "instagram"
+            },
+            {
+              "topico": "e os avaianos",
+              "comentario": "torcida"
+            }
+          ],
+          "observacao_geral": "agora deu tudo errado nesse pdca",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "acho que aqui temos que xingar todos que estão envolvidos nessa atividade",
+            "topicos": [
+              "os envolvidos",
+              "os não envolvidos",
+              "os envolvides",
+              "e os avaianos"
+            ],
+            "objetivo": "principalmente quem não está envolvido nessa atividade",
+            "responsavel": "Camila",
+            "prazo": "2026-04-01"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        }
+      ],
+      "criado_em": "2026-03-25T16:09:53.635657",
+      "atualizado_em": "2026-03-30T13:59:55.747400"
+    },
+    {
+      "id": "733f98c5-7443-464b-ac1e-9a58f4e14499",
+      "titulo": "compras",
+      "classificacao": "Expansão",
+      "responsavel": "Nikolas",
+      "email_responsavel": "ki@example.com",
+      "email_gerente": "hgh@example.com",
+      "prazo": "2026-04-02",
+      "status": "Aguardando Novo Ciclo",
+      "planejar": {
+        "descricao": "fghfhfgh",
+        "topicos": [
+          "gfhfgh",
+          "fghfh"
+        ],
+        "objetivo": "ghfhfghfhf",
+        "responsavel": "fhfhfghf",
+        "prazo": "2026-04-02"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [
+        {
+          "data": "2026-03-26T13:47:30.535179",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "gfhfgh",
+              "comentario": ""
+            },
+            {
+              "topico": "fghfh",
+              "comentario": ""
+            }
+          ],
+          "observacao_geral": "",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "fghfhfgh",
+            "topicos": [
+              "gfhfgh",
+              "fghfh"
+            ],
+            "objetivo": "ghfhfghfhf",
+            "responsavel": "fhfhfghf",
+            "prazo": "2026-04-02"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        },
+        {
+          "data": "2026-03-26T14:30:08.173213",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "gfhfgh",
+              "comentario": "zczxcz"
+            },
+            {
+              "topico": "fghfh",
+              "comentario": "zxcxzcz"
+            }
+          ],
+          "observacao_geral": "zxczczx",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "fghfhfgh",
+            "topicos": [
+              "gfhfgh",
+              "fghfh"
+            ],
+            "objetivo": "ghfhfghfhf",
+            "responsavel": "fhfhfghf",
+            "prazo": "2026-04-02"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        }
+      ],
+      "criado_em": "2026-03-26T13:46:45.975591",
+      "atualizado_em": "2026-04-01T17:05:16.801995"
+    },
+    {
+      "id": "e2902425-fc55-47f9-a5cb-80b9079ce173",
+      "titulo": "5S",
+      "classificacao": "Sobrevivência",
+      "responsavel": "Camila",
+      "email_responsavel": "camila.guedes@unilux.com.br",
+      "email_gerente": "gabriel.rodrigues@unilux.com.br",
+      "prazo": "2026-04-29",
+      "status": "Concluído",
+      "planejar": {
+        "descricao": "SUFHSDIFUSHFSU",
+        "topicos": [
+          "Quadro de ferramentas",
+          "Posicionamento das caixinhas",
+          "oie"
+        ],
+        "objetivo": "",
+        "responsavel": "Camila",
+        "prazo": "2026-04-06"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [
+        {
+          "data": "2026-03-30T13:50:22.214683",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "Quadro de ferramentas",
+              "comentario": ""
+            },
+            {
+              "topico": "Posicionamento das caixinhas",
+              "comentario": ""
+            },
+            {
+              "topico": "oie",
+              "comentario": ""
+            }
+          ],
+          "observacao_geral": "",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "SUFHSDIFUSHFSU",
+            "topicos": [
+              "Quadro de ferramentas",
+              "Posicionamento das caixinhas",
+              "oie"
+            ],
+            "objetivo": "",
+            "responsavel": "Camila",
+            "prazo": "2026-04-06"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        },
+        {
+          "data": "2026-03-30T13:51:41.065312",
+          "tipo": "realizacao",
+          "comentarios_topicos": [
+            {
+              "topico": "Quadro de ferramentas",
+              "comentario": ""
+            },
+            {
+              "topico": "Posicionamento das caixinhas",
+              "comentario": ""
+            },
+            {
+              "topico": "oie",
+              "comentario": ""
+            }
+          ],
+          "observacao_geral": "",
+          "resultado": "OK",
+          "planejar": {
+            "descricao": "SUFHSDIFUSHFSU",
+            "topicos": [
+              "Quadro de ferramentas",
+              "Posicionamento das caixinhas",
+              "oie"
+            ],
+            "objetivo": "",
+            "responsavel": "Camila",
+            "prazo": "2026-04-06"
+          },
+          "fazer": {
+            "acoes": ""
+          },
+          "checar": {
+            "resultados": "",
+            "analise": ""
+          },
+          "agir": {
+            "acoes_corretivas": ""
+          }
+        }
+      ],
+      "criado_em": "2026-03-30T13:44:15.511548",
+      "atualizado_em": "2026-03-30T13:51:41.065471"
+    },
+    {
+      "id": "81852893-5f8d-4f2b-a810-c777c754839c",
+      "titulo": "5S (romana/celular)",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-05",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: 5S (Romana/Celular)\n🎯 Objetivo: Implantação do 5S na etapa de Romana/Celular.\n📅 Status Atual: Projeto em andamento.\n________________________________________\n📌 Pontos a serem observados:\nAvaliar se o plano de limpeza está sendo auditado pela supervisora.\nGarantir que as ferramentas estejam sendo guardadas no quadro de ferramentas.\nConfirmar que todos os itens estão em caixinhas separadas e devidamente etiquetados.\nRenovar o quadro do mapa de tecidos e avaliar se está sendo seguido corretamente.\nAvaliar possíveis melhorias.\n________________________________________\n📊 Impacto esperado:\n\nImplementação sólida da cultura de 5S na empresa, promovendo maior organização do ambiente, redução de retrabalhos e perda de materiais, melhoria no tempo de resposta para operação, aumento da segurança na área, facilidade de encontrar itens e ferramentas, maior padronização das rotinas e, consequentemente, ganho de produtividade e melhor fluxo operacional.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-05"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T16:40:08.397886",
+      "atualizado_em": "2026-04-01T16:40:08.397886"
+    },
+    {
+      "id": "90cc1523-dd41-432f-a3cd-2f077740264f",
+      "titulo": "Excesso de estoque",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-13",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "Em andamento",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-13"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.812366",
+      "atualizado_em": "2026-04-01T17:04:40.812366"
+    },
+    {
+      "id": "1df58327-8761-4c4a-b78c-80c3f0f6236f",
+      "titulo": "Tubete Lixeiro",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-13",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "Em andamento",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-13"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.813957",
+      "atualizado_em": "2026-04-01T17:04:40.813957"
+    },
+    {
+      "id": "967ec3bb-7277-42f3-8766-574f3f023885",
+      "titulo": "Mesa dos Elevadores",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-13",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "Projeto: Mesa dos elevadores\n📌 Objetivo: A ideia desse projeto foi desenvolver uma mesa que pudesse ser padrão para todos os elevadores (padrão o material usado na montagem dela, não o desenho da estrutura em si) e que pudesse atender a tudo que foi planejado ali (como não temos o racional desse projeto, estruturarei aqui os pontos que foram planejados).\nCaixinhas em cima da mesa e não em baixo;\nCada item com sua caixinha;\nBobina de isomanta acoplada a mesa;\nNenhum item no chão.\nAvaliar o tamanho dos picotes da isomanta\n📅 Status Atual: Concluída\n🔍 Desvios Identificados: Devem ser mencionados aqui os desvios identificados daquilo que foi planejado ou do que foi reparado do que pode ser melhorado (caso seja reparado).\n🚀 Ações Corretivas: Ações que vão ser realizadas para corrigir aquilo que não está em congruência com o que foi planejado.\nTodos esses pontos devem ser mencionados no campo de comentário aqui do planner.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-13"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.815510",
+      "atualizado_em": "2026-04-01T17:04:40.815510"
+    },
+    {
+      "id": "938c639d-3b86-4517-8071-bbd997d37dbb",
+      "titulo": "Montagem de motor",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-03",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Montagem de Motor\n🎯 Objetivo: Melhorar toda a etapa de montagem de motor, trazendo mais ergonomia e organização ao processo. Cada item agora possui sua própria caixa, facilitando o manuseio e evitando misturas. Além disso, a montagem de peças grandes foi otimizada, e, com a implementação do sistema de Pick to Pop, o treinamento de novos operadores se tornou mais intuitivo, reduzindo erros de produção ao seguir um Procedimento Operacional Padrão (POP).\n📅 Status Atual: Projeto concluído.\n📌 Pontos a serem observados:\nGarantir que as ferramentas sejam alocadas corretamente e se mantenham nos locais definidos;\nAcompanhar a organização dos itens e estoque sob as mesas para evitar novos acúmulos;\nMonitorar o impacto do Pick to Screen e Pop to screen no treinamento e na redução de erros operacionais;\nAvaliar a estrutura da operação (está bonita e bem estruturada?);\nConversar com os operadores e entender se tem alguma dificuldade em relação a essa etapa;\nVerificar se tem itens com a mesma cor e entender melhor sobre esse ponto (se tem saídas para não termos itens iguais com cores diferentes na mesma caixinha)\n📊 Impacto esperado: Maior organização e ergonomia no processo de montagem, redução de erros de produção, melhor fluxo de trabalho e facilidade no treinamento de novos operadores",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-03"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.816940",
+      "atualizado_em": "2026-04-01T17:04:40.816940"
+    },
+    {
+      "id": "0bbd1bb4-61b0-46d4-aa96-b4ff2e437cb7",
+      "titulo": "Demarcação do piso",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-03-13",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Demarcação do Piso\n🎯 Objetivo: Organizar e padronizar os galpões da empresa, garantindo identificação visual clara para otimizar o uso dos espaços e melhorar a logística interna.\n📅 Status Atual: As demarcações do G4 e G5 estão concluídas, restando apenas a fixação das etiquetas de identificação. A demarcação do G3 será iniciada na semana do dia 11/08, com expectativa de que G6 e G7 sejam finalizados de forma mais rápida, aproximando a conclusão total do projeto.\n📌 Pontos a serem observados:\nAs etiquetas faltantes do G4 e G5 foram criadas e fixadas?\nHá necessidade de ajustes no layout das demarcações já realizadas?\n📊 Impacto esperado: Melhor organização visual dos estacionamentos e áreas de circulação, redução de erros de posicionamento e otimização do fluxo interno de carrinhos e materiais.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-03-13"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.819173",
+      "atualizado_em": "2026-04-01T17:04:40.819173"
+    },
+    {
+      "id": "6a5180f1-0f3b-4dad-9e02-32b7eb76a101",
+      "titulo": "Pick to screen",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-30",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Pick to Screen\n🎯 Objetivo:\n\nO projeto Pick to Screen foi implementado na área de embalagem plástica com o objetivo de trazer mais precisão e controle no processo de separação de componentes. Anteriormente, eram recorrentes os erros relacionados ao esquecimento de itens ou envio de peças incorretas para o setor. Com o novo sistema, cada operador passa a visualizar, em tempo real, quais itens devem ser separados, em que quantidade e em qual localização, garantindo maior confiabilidade, agilidade e padronização na operação.\n📅 Status Atual: Projeto concluído.\n📌 Pontos a serem observados:\nAs caixinhas estão posicionadas corretamente conforme o mapeamento feito no sistema?\nA manutenção está realizando o reaperto dos parafusos da estrutura a cada 1 ano, conforme previsto?\nO estudo de reavaliação da localização dos itens com base no consumo está sendo feito semestralmente?\nTodos os itens estão devidamente identificados com etiquetas legíveis, e o sistema de leitura (bipagem) está funcionando corretamente?\nEstética da estrutura:\n📊 Impacto esperado:\n\nRedução de erros na separação de itens, maior agilidade no processo de embalagem, facilidade no treinamento de novos operadores e melhor controle de inventário de componentes da embalagem plástica.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-30"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.820779",
+      "atualizado_em": "2026-04-01T17:04:40.820779"
+    },
+    {
+      "id": "9e00300f-a2ff-4b78-9ecb-9d25906b15b9",
+      "titulo": "Organização dos tecidos na doca de produção",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-06",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "Projeto: Organização dos tecidos na doca de produção\n📌 Objetivo: A ideia desse projeto é manter ativo a ideia de que haja uma reorganização da nossa doca de produção de tecidos a cada 6 meses. E essa organização é baseada no número de vendas de cada coleção + o peso do rolo de cada coleção. Ou seja, os que mais vendem e são mais pesados, ficam alocados em lugares mais acessíveis, aqueles que menos vendem e são mais leves, ficam alocados em lugares menos acessíveis. Logo abaixo o que deve ser comentado e anexado aqui nessa tarefa\nFoi feita a reorganização depois de 6 meses da última?;\nAnexar aqui algum documento que represente a última reorganização\n📅 Status Atual: Concluída\n🔍 Desvios Identificados: Devem ser mencionados aqui os desvios identificados daquilo que foi planejado ou do que foi reparado do que pode ser melhorado (caso seja reparado).\n🚀 Ações Corretivas: Ações que vão ser realizadas para corrigir aquilo que não está em congruência com o que foi planejado.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-06"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.822490",
+      "atualizado_em": "2026-04-01T17:04:40.822490"
+    },
+    {
+      "id": "bed18d30-89e3-4960-adf6-9fe367fd7c64",
+      "titulo": "Mudança no layout PVT",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-30",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Mudança no Layout PVT\n🎯 Objetivo: Otimizar o processo da PVT, garantindo um fluxo de trabalho mais eficiente. Além disso, liberar o espaço anteriormente ocupado pela PVT para a instalação e operação da linha da Romana, possibilitando um melhor aproveitamento da área produtiva.\n📅 Status Atual: Projeto concluído. A reestruturação do layout foi finalizada e o espaço está disponível para a linha da Romana.\n📌 Pontos a serem observados:\nEstão guardando o pvc89 no local correto?;\nQual a opinião dos operadores?;\nTem alguma possibilidade de melhoria?;\n📊 Impacto esperado: Maior eficiência no processo da PVT, melhor aproveitamento do espaço fabril e otimização da linha de produção com a entrada da linha da Romana.\n🔄 Próximos passos: Monitorar a adaptação ao novo layout e avaliar se há necessidade de ajustes para garantir o máximo de eficiência operacional.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-30"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.824084",
+      "atualizado_em": "2026-04-01T17:04:40.824084"
+    },
+    {
+      "id": "3f0fbb7c-f3f8-48dd-bb13-dc6d76f60b86",
+      "titulo": "Serra de corte ascendente (AVR)",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-06-01",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Serra Ascendente AVR\n🎯 Objetivo: Modernizar o processo de corte com a introdução de uma nova serra, substituindo a antiga, que já estava obsoleta. A nova máquina permite cortes automáticos, reduzindo a necessidade de intervenção manual na operação, garantindo mais precisão, segurança e eficiência no processo produtivo.\n📅 Status Atual: Projeto concluído. A serra já está em operação, trazendo melhorias significativas para o fluxo de trabalho.\n📌 Pontos a serem observados:\nVerificar com os operadores como está o funcionamento do corte automático e se há alguma dificuldade no processo.\nCertificar-se de que as planilhas do PCP estão de fácil acesso para os operadores.\nAvaliar se há recorrência de problemas nas planilhas, como divergências de medidas e quantidades de itens.\nInspecionar a estética da máquina para garantir que não houve danos estruturais.\nTestar o carrinho de apoio do operador para verificar se está funcionando adequadamente e atende às necessidades do processo.\nTodos os manuais estão disponíveis?\nAvaliar possíveis melhorias\n📊 Impacto esperado: Aumento da eficiência e precisão no corte, redução da interferência humana no processo, menor risco de erro nas medições e maior segurança operacional.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-06-01"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.825923",
+      "atualizado_em": "2026-04-01T17:04:40.825923"
+    },
+    {
+      "id": "f94c4bb0-8f87-4d77-af77-fad7195696a7",
+      "titulo": "Máquina de celular e mudança no processo",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-05-07",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Máquina da Celular\n🎯 Objetivo: Otimizar o processo de montagem da celular, reduzindo erros e minimizando a ação humana nas etapas de corte e furação dos tecidos. Além disso, a mudança no fluxo de trabalho trouxe o corte de tecido para dentro da produção, deixando a logística responsável apenas pela transferência de materiais, enquanto a produção se concentra exclusivamente na fabricação.\n📅 Status Atual: Projeto concluído. A única etapa pendente é a automação da configuração da peça na máquina, que será implementada com um leitor de código de barras, eliminando a necessidade de digitação manual pelo operador.\n📌 Pontos a serem observados:\nMonitorar a máquina para identificar possíveis problemas técnicos ou ajustes necessários.\nConversar com o operador para identificar possíveis dificuldades no processo com a nova máquina.\nMapa de alocação dos tecidos.\nAvaliar e pensar em possíveis melhorias simples.\n📊 Impacto esperado: Maior eficiência na montagem da celular, redução de erros operacionais, melhor aproveitamento do tempo de produção e separação clara das responsabilidades entre logística e produção.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-05-07"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.827747",
+      "atualizado_em": "2026-04-01T17:04:40.827747"
+    },
+    {
+      "id": "82bd4218-4ab3-46ca-8a57-e7c13f884765",
+      "titulo": "Bipagens zeradas",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-06-30",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Bipagens Zeradas\n🎯 Objetivo: Realizar análises no sistema para identificar bipagens zeradas ou próximas de zero, situações que não deveriam ocorrer, mas ainda acontecem. O projeto busca assegurar que o sistema registre corretamente os tempos de cada OP bipada por operador, garantindo confiabilidade nos dados e maior precisão no acompanhamento da produção.\n📅 Status Atual: Em andamento, com mapeamento das ocorrências de bipagens zeradas e levantamento das possíveis causas.\n🔍 Desvios Identificados: Registros inconsistentes no tempo de bipagem, impactando a acuracidade das medições e controles de processo.\n🚀 Ações Corretivas: Parametrização de regras no sistema, orientação aos operadores e revisão dos pontos de coleta de dados.\n🔄 Próximos passos: Implementar ajustes no sistema para evitar novos registros indevidos, validar os resultados e acompanhar se as correções garantem a confiabilidade dos tempos registrados.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-06-30"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.829507",
+      "atualizado_em": "2026-04-01T17:04:40.829507"
+    },
+    {
+      "id": "f834c1ce-af92-4bb2-9e1c-555c04384207",
+      "titulo": "Sobras de perfis",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-05-29",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "Projeto: Sobras de perfil de alumínio\n📌 Objetivo: O objetivo deste projeto é tornar o processo de utilização das sobras de perfis de alumínio mais organizado e eficiente. A ideia é que as sobras sejam devidamente cadastradas e controladas em planilha, permitindo que o PCP e a produção possam aproveitá-las de forma prática, evitando desperdícios e reduzindo custos. Alguns pontos principais a serem avaliados:\nVerificar as sobras cadastradas na planilha e conferir com o estoque físico.\nConversar com a produção para entender a opinião sobre a praticidade e eficiência no uso das sobras, além de possíveis melhorias.\nGarantir que o PCP mantenha controle completo do histórico de utilização das sobras.\nComparar a utilização com a geração de sobras, avaliando se estão equilibradas.\nVerificar se há mais de um perfil por doca e se algum está ficando fora do espaço delimitado.\n📅 Status Atual: Em andamento\n🔍 Desvios Identificados: Devem ser registrados aqui os desvios entre o que foi planejado e o que está sendo executado, ou pontos de melhoria identificados durante as análises.\n🚀 Ações Corretivas: Ações que deverão ser implementadas para corrigir falhas, padronizar o processo e garantir o uso efetivo das sobras de perfis de alumínio.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-05-29"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.831317",
+      "atualizado_em": "2026-04-01T17:04:40.831317"
+    },
+    {
+      "id": "31decbb1-4b4e-4620-9e7a-b13606cae10c",
+      "titulo": "Sobras de tecidos",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-03-02",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Sobras de tecido\n\n📌 Objetivo: A ideia desse projeto quando foi desenvolvido, foi tornar o sistema de utilização de sobras algo dinâmico e utilizável. Onde o PCP irá utilizar as sobras cadastradas no sistema da máquina e adicionadas na planilha de sobras. Não temo um racional do que foi desenhado pra esse projeto, mas tem alguns pontos que devemos analisar sobre a utilização dessas sobras:\n\nVerificação de 10 sobras na planilha e avaliar se estão igual no físico;\nConversar com a produção pra entender a opinião deles sobre a utilização; \nVer se o PCP está preenchendo o histórico de utilização de sobras.\nAvaliar se ainda está ficando vazio o estoque. Para que caso esteja, vejamos com o PCP se não vale a pena diminuir os padrões de tamanhos de sobras de alguns itens.\nEstão usando as etiquetas novas de sobra e não escrevendo mais nos tecidos?\n\n📅 Status Atual: Concluída\n\n🔍 Desvios Identificados: Devem ser mencionados aqui os desvios identificados daquilo que foi planejado ou do que foi reparado do que pode ser melhorado (caso seja reparado).\n\n🚀 Ações Corretivas: Ações que vão ser realizadas para corrigir aquilo que não está em congruência com o que foi planejado.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-03-02"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.833191",
+      "atualizado_em": "2026-04-01T17:04:40.833191"
+    },
+    {
+      "id": "2024f9ae-f46a-46bc-a8b4-384eca646113",
+      "titulo": "Doca niveladora de galpões",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-08-07",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Doca Niveladora de Galpões\n🎯 Objetivo: Desenvolver e implementar uma doca niveladora entre os galpões 4 e 5, garantindo uma passagem segura e ergonômica para o transporte de itens pesados. O projeto visa reduzir riscos de acidentes, melhorar a eficiência na movimentação de materiais e minimizar o esforço físico dos colaboradores.\n📅 Status Atual: Projeto concluído com sucesso. A doca niveladora foi instalada e já está em uso.\n🔍 Desvios Identificados:\n🚀 Ações Corretivas:\n🔄 Próximos passos: Monitorar o uso da doca niveladora para identificar possíveis ajustes e garantir que os benefícios planejados sejam alcançados.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-08-07"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.835776",
+      "atualizado_em": "2026-04-01T17:04:40.835776"
+    },
+    {
+      "id": "604bf70f-c094-4eeb-a12d-e8428e4300a9",
+      "titulo": "Marcação da romana",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-04-03",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Marcação da Romana\n🎯 Objetivo:\n\nRealizar o PDCA da marcação automática dos tecidos de romana na máquina M1 ultrassom a cada 6 meses, avaliando o andamento do processo e garantindo que as marcações sejam feitas de acordo com os dados preenchidos na planilha do computador da máquina. Essa planilha contém, por modelo, as medidas possíveis de fabricação da persiana, número de gomos, tamanhos dos gomos e quantidade de tecido no cabeçote.\n✅ Pontos Avaliados:\nEstão utilizando a caneta preta para tecidos claros e a caneta vermelha para tecidos escuros? Avaliar a possibilidade de uso de caneta ativada por luz ultravioleta.\nObservar quantas peças deram problema na planilha de retrabalho e nas baixas para sabermos e avaliarmos o custo que marcar com a romana está nos causando.\nPlanilhas no computador estão corretas? Avaliar se estão iguais as planilhas físicas e as do sistema que estão na máquina. Prestar atenção nas medidas onde ocorrem a mudança na quantidade de gomos, ali que reparamos que já aconteceram alguns problemas.\nEstá ocorrendo problema no elevador?\nHá marcação manual por algum motivo? Está havendo muitos erros de marcação?\n📊 Impacto esperado:\n\nGarantir precisão na marcação dos tecidos de romana, reduzir retrabalhos e custos, aumentar a confiabilidade do processo e assegurar padronização entre todos os modelos produzidos.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-04-03"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.837781",
+      "atualizado_em": "2026-04-01T17:04:40.837781"
+    },
+    {
+      "id": "890a1a52-db12-447c-b768-dc9f1472004f",
+      "titulo": "Máquinas de arquear",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-09-08",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Máquinas de Arquear\n🎯 Objetivo:\n\nRealizar o PDCA das máquinas de arquear a cada 6 meses, analisando o andamento do processo de utilização desses equipamentos localizados nos setores de embalagem de papelão, garantindo desempenho adequado e evitando danos aos materiais.\n✅ Pontos Avaliados:\nAmbas as máquinas estão funcionando? (Avaliar também com a manutenção o histórico de manutenções e registrar)\nEstão utilizando a máquina manual? Qual o motivo?\nO problema anterior, em que a máquina marcava e rasgava os papelões da Romana, ainda ocorre?\nEstá sendo utilizada na embalagem do G6 (Toldos)?\nOpinião dos operadores sobre a utilização das máquinas.\n📊 Impacto esperado:\n\nGarantir maior eficiência e segurança no processo de arquear embalagens, evitando danos aos produtos, reduzindo retrabalhos e assegurando a confiabilidade operacional dos equipamentos.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-09-08"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.839855",
+      "atualizado_em": "2026-04-01T17:04:40.839855"
+    },
+    {
+      "id": "81a7941b-65a0-4a37-a4e3-061007537d77",
+      "titulo": "Máquina de fita gomada",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-06-01",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: Máquina de Fita Gomada\n🎯 Objetivo:\n\nRealizar o PDCA das máquinas de fita gomada a cada 6 meses, garantindo o bom funcionamento e a correta utilização nos processos de embalagem de papelão nos galpões G3 e G6.\n📌Pontos a serem observados:\nA reserva está funcionando?\nEstão usando o comprimento correto da fita?\nO aquecedor está sendo utilizado corretamente? (Retirado no verão e instalado no inverno)\nA máquina apresenta sinais de oxidação?\n📊 Impacto esperado:\n\nMaior eficiência no processo de embalagem, redução de falhas operacionais, prolongamento da vida útil das máquinas e manutenção da qualidade das embalagens.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-06-01"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.841901",
+      "atualizado_em": "2026-04-01T17:04:40.841901"
+    },
+    {
+      "id": "44f80df5-22f7-42aa-89b5-ce61003ca0b8",
+      "titulo": "QR Code nas Embalagens",
+      "classificacao": "Expansão",
+      "responsavel": "Camila",
+      "email_responsavel": "",
+      "email_gerente": "",
+      "prazo": "2026-05-11",
+      "status": "Em Andamento",
+      "planejar": {
+        "descricao": "📌 Projeto: QR Code nas Embalagens\n🎯 Objetivo:\n\nPadronizar e facilitar a coleta de informações sobre problemas nas embalagens, que anteriormente eram relatados de forma informal (via WhatsApp, conversas com representantes, etc.). A proposta desse projeto é criar um canal rápido, simples e rastreável para que a empresa tenha uma base de dados organizada de relatos. O QR Code direciona para um formulário onde o cliente pode registrar sua ocorrência. Importante destacar que esse sistema não substitui o processo de RMA.\n📅 Status Atual:\n\nProjeto concluído. O QR Code já está sendo inserido nas embalagens e passando por auditorias diárias para garantir a eficácia e continuidade do projeto.\n📌 Pontos a serem observados:\nVerificar se o QR Code está sendo aplicado em todas as embalagens, incluindo as de papelão e plástico (anteriormente, não era aplicado nas embalagens plásticas).\nCertificar-se de que os representantes estão informados e compreendem o funcionamento do QR Code e do formulário.\nMonitorar o volume e a qualidade dos dados recebidos via formulário.\nGarantir a acessibilidade e legibilidade do QR Code nas embalagens, evitando falhas na leitura.\nAvaliar possíveis melhorias no formulário, caso surjam sugestões de clientes ou da equipe interna.\n📊 Impacto Esperado:\n\nMaior eficiência na captação e rastreabilidade de problemas relacionados às embalagens, com informações estruturadas sobre produtos afetados, regiões impactadas, transportadoras envolvidas e medidas específicas. Isso permitirá ações mais ágeis e direcionadas para a resolução dos problemas identificados.",
+        "topicos": [
+          "Avaliação do projeto"
+        ],
+        "objetivo": "Importado do antigo sistema",
+        "responsavel": "Camila",
+        "prazo": "2026-05-11"
+      },
+      "fazer": {
+        "acoes": ""
+      },
+      "checar": {
+        "resultados": "",
+        "analise": ""
+      },
+      "agir": {
+        "acoes_corretivas": ""
+      },
+      "historico": [],
+      "criado_em": "2026-04-01T17:04:40.844161",
+      "atualizado_em": "2026-04-01T17:04:40.844161"
+    }
+  ]
+}
