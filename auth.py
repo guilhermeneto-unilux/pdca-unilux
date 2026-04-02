@@ -33,14 +33,23 @@ def carregar_usuarios():
     return resp.data or []
 
 
+import streamlit as st
+
 def autenticar(username, senha):
     """Valida login e senha. Retorna o usuário ou None."""
     _inicializar_admin()
     senha_hash = _hash_senha(senha)
-    resp = get_client().table("usuarios").select("*").eq("username", username).eq("senha_hash", senha_hash).execute()
-    if resp.data:
-        return resp.data[0]
-    return None
+    try:
+        resp = get_client().table("usuarios").select("*").eq("username", username).eq("senha_hash", senha_hash).execute()
+        if resp.data:
+            return resp.data[0]
+        return None
+    except Exception as e:
+        url_tentada = get_client().supabase_url
+        st.error(f"Erro ao tentar conectar na URL: {url_tentada}")
+        st.error(f"Verifique se a URL está certa nos Secrets. Erro original: {e}")
+        return None
+
 
 
 def adicionar_usuario(username, senha, nome, papel="operador"):
