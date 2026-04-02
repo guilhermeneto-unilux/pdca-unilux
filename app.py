@@ -47,15 +47,20 @@ st.markdown("""
         background-color: var(--bg-color);
     }
 
-    /* Ocultar apenas a navegação nativa e o menu do topo, mas manter o botão da sidebar */
+    /* Ocultar apenas a navegação nativa e o menu do topo */
     [data-testid="stSidebarNav"] { display: none; }
-    [data-testid="stToolbar"] { visibility: hidden; }
-    /* Estilizar o botão de expansão da sidebar para que não suma */
-    [data-testid="collapsedControl"] {
+    [data-testid="stToolbar"] { display: none; }
+    
+    /* Forçar visibilidade do botão de abrir/fechar a barra lateral */
+    button[data-testid="collapsedControl"] {
+        display: flex !important;
         visibility: visible !important;
-        background: rgba(255,255,255,0.8);
-        border-radius: 0 4px 4px 0;
-        z-index: 1000;
+        background-color: white !important;
+        border: 1px solid #ddd !important;
+        top: 10px !important;
+        left: 10px !important;
+        border-radius: 4px !important;
+        z-index: 999999;
     }
 
     [data-testid="stSidebar"] {
