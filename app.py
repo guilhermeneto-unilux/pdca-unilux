@@ -47,23 +47,14 @@ st.markdown("""
         background-color: var(--bg-color);
     }
 
-    /* Ocultar apenas a navegação nativa e o menu do topo */
+    /* Ocultar apenas a navegação de páginas nativa */
     [data-testid="stSidebarNav"] { display: none; }
-    [data-testid="stToolbar"] { display: none; }
     
-    /* Forçar visibilidade do botão de abrir/fechar a barra lateral */
-    button[data-testid="collapsedControl"] {
-        display: flex !important;
-        visibility: visible !important;
-        background-color: white !important;
-        border: 1px solid #ddd !important;
-        top: 10px !important;
-        left: 10px !important;
-        border-radius: 4px !important;
-        z-index: 999999;
+    /* Garantir que o botão de abrir/fechar a barra lateral apareça */
+    section[data-testid="stSidebar"] {
+        background-color: var(--sidebar-bg);
+        border-right: 1px solid var(--border-color);
     }
-
-    [data-testid="stSidebar"] {
         background-color: var(--sidebar-bg);
         border-right: 1px solid var(--border-color);
     }
