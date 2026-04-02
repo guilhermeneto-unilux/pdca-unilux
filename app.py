@@ -39,7 +39,6 @@ st.markdown("""
         --text-muted: #6B7280;
     }
 
-    /* Reset global de fonte */
     html, body, [class*="css"], .stMarkdown {
         font-family: 'Inter', sans-serif !important;
     }
@@ -81,19 +80,13 @@ st.markdown("""
     }
 
     /* Cards de Métrica */
-    .metric-container {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-
     .metric-box {
         background: white;
         border-left: 5px solid #000;
         padding: 20px;
         border-radius: 4px;
-        flex: 1;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
     }
 
     .metric-label {
@@ -124,60 +117,49 @@ st.markdown("""
         margin: 0;
     }
 
-    .page-subtitle {
-        font-size: 1rem;
-        color: #6B7280;
-        margin-top: -5px;
-    }
-
-    /* Tabelas e Listas */
-    .item-row {
+    /* Rows de Lista Estilizadas */
+    .pdca-row-container {
         background: white;
-        padding: 15px 20px;
+        padding: 18px 24px;
         border-radius: 8px;
         border: 1px solid #E5E7EB;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        margin-bottom: 12px;
+        transition: all 0.2s;
+    }
+    .pdca-row-container:hover {
+        border-color: #000;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
     /* Badges */
     .badge {
-        padding: 3px 10px;
+        padding: 4px 12px;
         border-radius: 100px;
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
     }
-    .bg-gray { background: #E5E7EB; color: #374151; }
+    .bg-gray { background: #F3F4F6; color: #374151; border: 1px solid #D1D5DB; }
     .bg-black { background: #000; color: #FFF; }
     .bg-red { background: #FEE2E2; color: #991B1B; }
+    .bg-yellow { background: #FEF3C7; color: #92400E; }
 
     /* Botões Customizados */
     .stButton > button {
-        border-radius: 4px !important;
+        border-radius: 6px !important;
         font-weight: 600 !important;
         text-transform: uppercase !important;
-        font-size: 0.8rem !important;
-        letter-spacing: 0.5px !important;
+        font-size: 0.75rem !important;
     }
-
-    .stButton > button[kind="primary"] {
-        background-color: #000 !important;
-        color: #FFF !important;
-        border: none !important;
-    }
-
 </style>
 """, unsafe_allow_html=True)
 
-# 4. COMPONENTES DE INTERFACE
+# 4. FUNÇÕES DE SUPORTE UI
 def renderizar_header(titulo, subtitulo):
     st.markdown(f"""
     <div class="page-header">
         <h1 class="page-title">{titulo}</h1>
-        <p class="page-subtitle">{subtitulo}</p>
+        <p style='color: #6B7280; font-size: 1rem; margin-top: -5px;'>{subtitulo}</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -189,15 +171,22 @@ def renderizar_metrica(valor, label):
     </div>
     """, unsafe_allow_html=True)
 
-def badge_status(status):
+def b_status(status):
     color = "bg-black" if status == "Concluído" else "bg-gray"
     return f'<span class="badge {color}">{status}</span>'
 
-def badge_classe(classe):
-    color = "bg-red" if classe == "Sobrevivência" else "bg-gray"
+def b_classe(classe):
+    if classe == "Sobrevivência": color = "bg-red"
+    elif classe == "Expansão": color = "bg-yellow"
+    else: color = "bg-gray"
     return f'<span class="badge {color}">{classe}</span>'
 
-# 5. NAVEGAÇÃO (SIDEBAR)
+def formatar_data(data_iso):
+    if not data_iso: return "—"
+    try: return datetime.fromisoformat(data_iso).strftime("%d/%m/%Y")
+    except: return data_iso
+
+# 5. BARRA LATERAL
 def renderizar_sidebar():
     with st.sidebar:
         st.markdown("""
@@ -207,212 +196,218 @@ def renderizar_sidebar():
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        
         # Menu
-        if st.button("📊  DASHBOARD", use_container_width=True, type="primary" if st.session_state.pagina == "dashboard" else "secondary"):
-            st.session_state.pagina = "dashboard"
-            st.rerun()
-            
-        if st.button("➕  NOVO PROJETO", use_container_width=True, type="primary" if st.session_state.pagina == "novo_pdca" else "secondary"):
-            st.session_state.pagina = "novo_pdca"
-            st.rerun()
-            
-        if st.button("📋  LISTA DE PDCAS", use_container_width=True, type="primary" if st.session_state.pagina == "lista_pdcas" else "secondary"):
-            st.session_state.pagina = "lista_pdcas"
-            st.rerun()
-            
+        pages = [("📊  DASHBOARD", "dashboard"), ("➕  NOVO PROJETO", "novo_pdca"), ("📋  LISTA DE PDCAS", "lista_pdcas")]
         if st.session_state.usuario_logado.get("papel") == "admin":
-            if st.button("⚙️  ADMINISTRAÇÃO", use_container_width=True, type="primary" if st.session_state.pagina == "admin" else "secondary"):
-                st.session_state.pagina = "admin"
+            pages.append(("⚙️  ADMINISTRAÇÃO", "admin"))
+            
+        for label, key in pages:
+            if st.button(label, key=f"nav_{key}", use_container_width=True, 
+                         type="primary" if st.session_state.pagina == key else "secondary"):
+                st.session_state.pagina = key
                 st.rerun()
         
-        # Footer Sidebar
-        st.markdown("<div style='position: fixed; bottom: 20px; width: inherit;'>", unsafe_allow_html=True)
-        st.markdown(f"---")
-        st.caption(f"👤 {st.session_state.usuario_logado['nome']}")
-        if st.button("🚪 Sair", use_container_width=True):
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown(f"<small>Usuário:</small><br><b>{st.session_state.usuario_logado['nome']}</b>", unsafe_allow_html=True)
+        if st.button("🚪 Sair", key="logout_btn", use_container_width=True):
             st.session_state.usuario_logado = None
             st.session_state.pagina = "dashboard"
             st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
 
 # 6. LÓGICA DE PÁGINAS
 
 def pagina_dashboard():
     renderizar_header("Dashboard de Performance", "VISÃO GERAL DA OPERAÇÃO")
-    
     todos = listar_pdcas()
     andamento = [p for p in todos if p["status"] == "Em Andamento"]
-    atrasados = 0
-    hoje = datetime.now().date()
-    for p in andamento:
-        if p.get("prazo") and datetime.strptime(p["prazo"], "%Y-%m-%d").date() < hoje:
-            atrasados += 1
-
-    col1, col2, col3, col4 = st.columns(4)
-    with col1: renderizar_metrica(len(todos), "Total de Processos")
-    with col2: renderizar_metrica(len(andamento), "Em Execução")
-    with col3: renderizar_metrica(len([p for p in todos if p["status"] == "Concluído"]), "Finalizados")
-    with col4: renderizar_metrica(atrasados, "Atrasos Críticos")
-
-    st.markdown("<br><h4>Projetos Recentes</h4>", unsafe_allow_html=True)
-    if not todos:
-        st.info("Nenhum projeto registrado.")
-    else:
-        for p in sorted(todos, key=lambda x: x.get("atualizado_em", ""), reverse=True)[:5]:
-            st.markdown(f"""
-            <div class="item-row">
-                <div>
-                    <div style='font-weight:700;'>{p['titulo']}</div>
-                    <div style='font-size:0.8rem; color:#666;'>Responsável: {p['responsavel']}</div>
-                </div>
-                <div>
-                    {badge_classe(p['classificacao'])}
-                    {badge_status(p['status'])}
-                </div>
+    
+    c1, c2, c3, c4 = st.columns(4)
+    with c1: renderizar_metrica(len(todos), "Total de Processos")
+    with c2: renderizar_metrica(len(andamento), "Em Execução")
+    with c3: renderizar_metrica(len([p for p in todos if p["status"] == "Concluído"]), "Finalizados")
+    with c4: renderizar_metrica(len([p for p in todos if p["classificacao"] == "Sobrevivência"]), "Riscos Críticos")
+    
+    st.markdown("---")
+    st.subheader("Atividades Recentes")
+    for p in sorted(todos, key=lambda x: x.get("atualizado_em", ""), reverse=True)[:5]:
+        st.markdown(f"""
+        <div class="pdca-row-container">
+            <div style='display:flex; justify-content: space-between;'>
+                <b>{p['titulo']}</b>
+                <div>{b_classe(p['classificacao'])} {b_status(p['status'])}</div>
             </div>
-            """, unsafe_allow_html=True)
+            <div style='font-size:0.8rem; color:#666; margin-top:5px;'>Resp: {p['responsavel']} | Prazo: {formatar_data(p['prazo'])}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 def pagina_novo_pdca():
-    renderizar_header("Novo Ciclo PDCA", "PLANEJAMENTO DE MELHORIA")
-    
-    with st.form("form_novo"):
+    renderizar_header("Novo Ciclo PDCA", "PLANEJAMENTO ESTRATÉGICO")
+    with st.container():
         col1, col2 = st.columns(2)
         with col1:
             titulo = st.text_input("Título do Projeto")
-            resp = st.selectbox("Responsável", ["Camila", "Gabriel", "Guilherme"])
+            resp = st.selectbox("Líder do Projeto", ["Camila", "Gabriel", "Guilherme"])
         with col2:
             classe = st.selectbox("Classificação", ["Sobrevivência", "Expansão", "Autonomia"])
-            prazo = st.date_input("Prazo Final", value=datetime.now() + timedelta(days=30))
+            prazo = st.date_input("Prazo de Conclusão", value=datetime.now() + timedelta(days=30))
         
+        st.markdown("---")
         st.write("**Planejamento (PLAN)**")
-        desc = st.text_area("Descrição da Oportunidade")
-        obj = st.text_area("Objetivo Principal")
+        desc = st.text_area("Descrição detalhada do Problema / Oportunidade")
+        obj = st.text_area("Objetivo / Meta Final")
         
-        if st.form_submit_button("CRIAR PROJETO", type="primary"):
+        if st.button("CRIAR E INICIAR PROJETO", type="primary", use_container_width=True):
             if titulo and desc:
                 criar_pdca({
-                    "titulo": titulo,
-                    "classificacao": classe,
-                    "responsavel": resp,
-                    "prazo": prazo.strftime("%Y-%m-%d"),
+                    "titulo": titulo, "classificacao": classe, "responsavel": resp,
+                    "prazo": prazo.strftime("%Y-%m-%d"), "status": "Em Andamento",
                     "planejar": {"descricao": desc, "objetivo": obj}
                 })
-                st.success("Projeto criado!")
+                st.success("PDCA Iniciado!")
                 st.balloons()
-            else:
-                st.error("Preencha o título e a descrição.")
+            else: st.error("Título e Descrição são obrigatórios.")
 
 def pagina_lista_pdcas():
-    renderizar_header("Lista de PDCAs", "REPOSITÓRIO DE PROJETOS")
-    
+    renderizar_header("Repositório de Projetos", "LISTA COMPLETA DE PDCAS")
     todos = listar_pdcas()
+    
     if not todos:
         st.info("Nenhum projeto encontrado.")
         return
 
     for p in todos:
-        col_txt, col_btn = st.columns([4, 1])
-        with col_txt:
-            st.markdown(f"""
-            <div class="item-row">
-                <div>
-                    <strong>{p['titulo']}</strong><br>
-                    <small>Prazo: {p['prazo']} | Líder: {p['responsavel']}</small>
-                </div>
-                <div>{badge_status(p['status'])}</div>
+        st.markdown(f"""
+        <div class="pdca-row-container" style='margin-bottom:0px; border-bottom:none; border-radius:8px 8px 0 0;'>
+            <div style='display:flex; justify-content: space-between;'>
+                <span style='font-size:1.1rem; font-weight:700;'>{p['titulo']}</span>
+                <div>{b_status(p['status'])}</div>
             </div>
-            """, unsafe_allow_html=True)
-        with col_btn:
-            if st.button("GERENCIAR", key=f"btn_{p['id']}", use_container_width=True):
-                st.session_state.pdca_selecionado = p
-                st.session_state.pagina = "detalhe_pdca"
-                st.rerun()
-
-def pagina_admin():
-    renderizar_header("Administração", "CONTROLE DE USUÁRIOS")
-    t1, t2 = st.tabs(["Listar", "Novo Usuário"])
-    with t1:
-        for u in auth.listar_usuarios():
-            st.write(f"**{u['nome']}** ({u['username']}) - {u['papel']}")
-            st.divider()
-    with t2:
-        with st.form("new_user"):
-            n = st.text_input("Nome")
-            u = st.text_input("User")
-            p = st.text_input("Pass", type="password")
-            r = st.selectbox("Papel", ["operador", "admin"])
-            if st.form_submit_button("CADASTRAR"):
-                auth.adicionar_usuario(n, u, p, r)
-                st.success("OK!")
-
-def pagina_detalhe_pdca():
-    p = st.session_state.pdca_selecionado
-    renderizar_header(p['titulo'], "DETALHES E EXECUÇÃO")
-    
-    if st.button("← VOLTAR"):
-        st.session_state.pagina = "lista_pdcas"
-        st.rerun()
-        
-    st.write(f"**Status:** {p['status']} | **Classe:** {p['classificacao']}")
-    st.info(f"**Objetivo:** {p['planejar'].get('objetivo', '—')}")
-    
-    st.divider()
-    st.subheader("Registrar Execução")
-    obs = st.text_area("Observações da atividade realizada")
-    confirm = st.checkbox("Confirmo que as atividades planejadas foram conferidas.")
-    
-    col_ok, col_fail = st.columns(2)
-    with col_ok:
-        if st.button("FINALIZAR (TUDO OK)", type="primary", use_container_width=True):
-            if confirm:
-                registrar_realizacao(p['id'], {"observacoes": obs}, True)
-                st.success("Ciclo finalizado!")
-                st.rerun()
-            else:
-                st.warning("Marque a confirmação.")
-    with col_fail:
-        if st.button("REABRIR CICLO (PENDÊNCIAS)", use_container_width=True):
-            registrar_realizacao(p['id'], {"observacoes": obs}, False)
-            st.info("Novo ciclo agendado.")
-            st.rerun()
-
-# 7. MAIN APP ENTRY
-if "usuario_logado" not in st.session_state:
-    st.session_state.usuario_logado = None
-if "pagina" not in st.session_state:
-    st.session_state.pagina = "dashboard"
-
-if not st.session_state.usuario_logado:
-    # Tela de Login Industrial
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1, 1, 1])
-    with c2:
-        st.markdown("""
-        <div style='text-align:center; padding: 20px; border: 1px solid #DDD; border-radius: 8px; background: white;'>
-            <h2 style='margin-bottom:0;'>UNILUX</h2>
-            <p style='color:#666; font-size: 0.8rem; letter-spacing: 2px;'>AERO-INDUSTRIAL</p>
+            <div style='font-size:0.85rem; color:#666;'>
+                Líder: {p['responsavel']} | Prazo: {formatar_data(p['prazo'])} | {p['classificacao']}
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        with st.form("login"):
-            u = st.text_input("Usuário")
-            p = st.text_input("Senha", type="password")
-            if st.form_submit_button("ENTRAR", use_container_width=True, type="primary"):
-                user = auth.autenticar(u, p)
-                if user:
-                    st.session_state.usuario_logado = user
+        
+        # AÇÕES (Botões horizontais)
+        with st.container():
+            st.markdown("<div style='background: white; padding: 10px 24px; border: 1px solid #E5E7EB; border-top:none; border-radius: 0 0 8px 8px; margin-bottom:15px;'>", unsafe_allow_html=True)
+            cols = st.columns([1,1,1,1,4])
+            if cols[0].button("🔄 Realizar", key=f"re_{p['id']}"):
+                st.session_state.pdca_selecionado = p
+                st.session_state.pagina = "realizar_pdca"
+                st.rerun()
+            if cols[1].button("👁️ Ver", key=f"vi_{p['id']}"):
+                st.session_state.pdca_selecionado = p
+                st.session_state.pagina = "visualizar_pdca"
+                st.rerun()
+            if cols[2].button("📝 Editar", key=f"ed_{p['id']}"):
+                st.session_state.pdca_selecionado = p
+                st.session_state.pagina = "editar_pdca"
+                st.rerun()
+            if cols[3].button("🗑️ Excluir", key=f"ex_{p['id']}"):
+                if st.session_state.get('confirm_del') == p['id']:
+                    remover_pdca(p['id'])
+                    st.success("Removido!")
                     st.rerun()
                 else:
-                    st.error("Falha no login")
+                    st.session_state.confirm_del = p['id']
+                    st.warning("Clique novamente para confirmar")
+            st.markdown("</div>", unsafe_allow_html=True)
+
+def pagina_realizar_pdca():
+    p = st.session_state.pdca_selecionado
+    renderizar_header(f"Execução: {p['titulo']}", "REGISTRO DE ATIVIDADES")
+    if st.button("← VOLTAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
+    
+    st.info(f"**Planejamento:** {p['planejar'].get('descricao', '')}")
+    obs = st.text_area("Relato da Execução", placeholder="O que foi feito? Ocorreu algum imprevisto?")
+    check = st.checkbox("Confirmo a realização das tarefas")
+    
+    col1, col2 = st.columns(2)
+    if col1.button("FINALIZAR PDCA", type="primary", use_container_width=True):
+        if check:
+            registrar_realizacao(p['id'], {"observacoes": obs}, True)
+            st.success("Concluído com sucesso!")
+            st.session_state.pagina = "lista_pdcas"; st.rerun()
+        else: st.warning("Confirme o checklist.")
+    if col2.button("AGENDAR NOVO CICLO", use_container_width=True):
+        registrar_realizacao(p['id'], {"observacoes": obs}, False)
+        st.warning("Ciclo reiniciado para novas melhorias.")
+        st.session_state.pagina = "lista_pdcas"; st.rerun()
+
+def pagina_visualizar_pdca():
+    p = st.session_state.pdca_selecionado
+    renderizar_header(p['titulo'], "DETALHES DO PROJETO")
+    if st.button("← VOLTAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
+    
+    st.write(f"**Líder:** {p['responsavel']} | **Prazo:** {formatar_data(p['prazo'])}")
+    st.write(f"**Classificação:** {b_classe(p['classificacao'])}", unsafe_allow_html=True)
+    
+    t1, t2 = st.tabs(["📋 Planejamento", "🕒 Histórico"])
+    with t1:
+        st.write("**Descrição:**", p['planejar'].get('descricao'))
+        st.write("**Objetivo:**", p['planejar'].get('objetivo'))
+    with t2:
+        hist = p.get('historico', [])
+        if not hist: st.caption("Sem histórico registrado.")
+        for h in hist:
+            st.write(f"**{formatar_data(h['data'])}** - {h.get('observacoes', 'Sem obs.')}")
+
+def pagina_editar_pdca():
+    p = st.session_state.pdca_selecionado
+    renderizar_header(f"Editar: {p['titulo']}", "AJUSTE DE DADOS")
+    if st.button("← CANCELAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
+    
+    with st.form("edit_form"):
+        new_title = st.text_input("Título", value=p['titulo'])
+        new_resp = st.selectbox("Responsável", ["Camila", "Gabriel", "Guilherme"], index=0)
+        new_deadline = st.date_input("Novo Prazo", value=datetime.strptime(p['prazo'], "%Y-%m-%d"))
+        if st.form_submit_button("SALVAR ALTERAÇÕES"):
+            atualizar_pdca(p['id'], {"titulo": new_title, "responsavel": new_resp, "prazo": new_deadline.strftime("%Y-%m-%d")})
+            st.success("Atualizado!")
+            st.session_state.pagina = "lista_pdcas"; st.rerun()
+
+def pagina_admin():
+    renderizar_header("Gestão de Acesso", "ADMINISTRAÇÃO DO SISTEMA")
+    t1, t2 = st.tabs(["Usuários Ativos", "Novo Usuário"])
+    with t1:
+        for u in auth.listar_usuarios():
+            st.write(f"👤 **{u['nome']}** | ID: `{u['username']}` | [{u['papel'].upper()}]")
+    with t2:
+        with st.form("n_u"):
+            n = st.text_input("Nome Completo")
+            u = st.text_input("Username")
+            p = st.text_input("Senha", type="password")
+            r = st.selectbox("Nível", ["operador", "admin"])
+            if st.form_submit_button("CRIAR"):
+                if auth.adicionar_usuario(n, u, p, r): st.success("Criado!"); st.rerun()
+
+# 7. INICIALIZAÇÃO E ROUTING
+if "usuario_logado" not in st.session_state: st.session_state.usuario_logado = None
+if "pagina" not in st.session_state: st.session_state.pagina = "dashboard"
+
+if not st.session_state.usuario_logado:
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    c1, mid, c3 = st.columns([1, 1.2, 1])
+    with mid:
+        st.markdown("<div style='text-align:center; padding:20px; background:white; border-radius:10px; border:1px solid #DDD;'><h2>UNILUX</h2><p style='color:#666;letter-spacing:1px;font-size:0.8rem;'>INDUSTRIAL ACCESS</p></div>", unsafe_allow_html=True)
+        with st.form("l"):
+            u = st.text_input("Usuário")
+            p = st.text_input("Senha", type="password")
+            if st.form_submit_button("LOGIN", use_container_width=True, type="primary"):
+                user = auth.autenticar(u, p)
+                if user: st.session_state.usuario_logado = user; st.rerun()
+                else: st.error("Incorreto")
     st.stop()
 
-# Render Sidebar if logged in
 renderizar_sidebar()
 
-# Page Routing
 if st.session_state.pagina == "dashboard": pagina_dashboard()
 elif st.session_state.pagina == "novo_pdca": pagina_novo_pdca()
 elif st.session_state.pagina == "lista_pdcas": pagina_lista_pdcas()
 elif st.session_state.pagina == "admin": pagina_admin()
-elif st.session_state.pagina == "detalhe_pdca": pagina_detalhe_pdca()
+elif st.session_state.pagina == "realizar_pdca": pagina_realizar_pdca()
+elif st.session_state.pagina == "visualizar_pdca": pagina_visualizar_pdca()
+elif st.session_state.pagina == "editar_pdca": pagina_editar_pdca()
+
+st.markdown("<div style='text-align:center; padding:50px; color:#AAA; font-size:0.7rem;'>UNILUX SYSTEMS v3.0 | 2024</div>", unsafe_allow_html=True)
