@@ -344,11 +344,9 @@ if not st.session_state.usuario_logado:
     
     col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
-        st.markdown("""
-        <div class="metric-card" style="margin-top: 2rem; padding: 2.5rem;">
-            <p class="sub-head" style="text-align: center;">AUTENTICAÇÃO</p>
-            <h3 style="text-align: center; margin-bottom: 2rem;">Entre com suas credenciais</h3>
-        """, unsafe_allow_html=True)
+        # Usamos markdown simples sem abrir divs que cruzam widgets
+        st.markdown('<p class="sub-head" style="text-align: center; margin-top: 2rem;">AUTENTICAÇÃO</p>', unsafe_allow_html=True)
+        st.markdown('<h3 style="text-align: center; margin-bottom: 2rem;">Entre com suas credenciais</h3>', unsafe_allow_html=True)
         
         with st.form("form_login"):
             username = st.text_input("Usuário (Username)")
@@ -362,10 +360,10 @@ if not st.session_state.usuario_logado:
                 else:
                     st.error("❌ Credenciais incorretas.")
         
-        st.markdown("</div>", unsafe_allow_html=True)
         st.caption("Esqueceu sua senha? Entre em contato com a supervisão industrial.")
                     
     st.stop()
+
 
 # ==================================================
 # SIDEBAR NAVEGAÇÃO
