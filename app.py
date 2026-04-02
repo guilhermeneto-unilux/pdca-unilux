@@ -19,216 +19,195 @@ from notificacoes import (
     verificar_notificacoes, enviar_notificacao_realizacao_gerente
 )
 
-# ==================================================
-# CONFIGURAÇÃO DA PÁGINA
-# ==================================================
+# Detecta se estamos em staging ou main (para o badge visual)
+# No Streamlit Cloud, podemos olhar a variável de ambiente ou apenas o nome do branch se disponível
+IS_STAGING = False
+try:
+    import subprocess
+    branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
+    IS_STAGING = (branch == "staging")
+except:
+    pass
+
 st.set_page_config(
-    page_title="Sistema PDCA — Gestão de Melhoria Contínua",
-    page_icon="logo.png",
+    page_title=f"Unilux {'(STAGING)' if IS_STAGING else ''} | Gestão PDCA", 
+    page_icon="🏗️", 
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
+
 # ==================================================
-# CSS CUSTOMIZADO — Visual premium, tema industrial
+# CSS CUSTOMIZADO — Identidade Visual UNILUX Industrial
 # ==================================================
 st.markdown("""
 <style>
-    /* ===== Fontes e cores globais (Unilux Theme) ===== */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
     }
     
-    /* ===== Esconder Sidebar Nativa ===== */
-    [data-testid="collapsedControl"] {
-        display: none;
+    .stApp {
+        background-color: #f7f8fa;
     }
+    
+    /* ===== Sidebar UNILUX ===== */
     [data-testid="stSidebar"] {
-        display: none;
+        background-color: #ffffff;
+        border-right: 1px solid #e5e7eb;
     }
+    [data-testid="stSidebarNav"] { display: none; } /* Custom nav implemented below */
     
-    /* ===== Header Unilux ===== */
-    .header-container {
-        background: linear-gradient(135deg, #2b2b2b 0%, #1e1e1e 100%);
-        padding: 1.5rem 2rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        border: 1px solid #444;
-    }
-    .header-container h1 {
-        color: #ffffff !important;
-        font-weight: 700;
-        font-size: 1.8rem;
-        margin: 0;
-    }
-    .header-container p {
-        color: #b0b0b0 !important;
-        font-size: 0.95rem;
-        margin: 0.3rem 0 0 0;
-    }
-    
-    /* ===== Cards de PDCA ===== */
-    .pdca-card {
-        background: #ffffff;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 1.2rem 1.5rem;
+    .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
         margin-bottom: 1rem;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        transition: all 0.2s ease;
     }
-    .pdca-card:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        transform: translateY(-1px);
+    .sidebar-logo {
+        font-weight: 800;
+        font-size: 1.2rem;
+        letter-spacing: -0.5px;
+        color: #000;
     }
-    .pdca-card h3 {
-        color: #2b2b2b;
-        font-weight: 600;
-        margin: 0 0 0.5rem 0;
-        font-size: 1.1rem;
+    .sidebar-sublogo {
+        font-size: 0.7rem;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
-    .pdca-card p {
-        color: #666666;
-        font-size: 0.88rem;
-        margin: 0.2rem 0;
-    }
-    
-    /* ===== Badges de classificação ===== */
-    .badge {
-        display: inline-block;
-        padding: 0.2rem 0.7rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-    }
-    .badge-sobrevivencia {
-        background: #f5f5f5;
-        color: #2c2c2c;
-        border: 1px solid #cccccc;
-    }
-    .badge-expansao {
-        background: #e0e0e0;
-        color: #1a1a1a;
-        border: 1px solid #b3b3b3;
-    }
-    .badge-autonomia {
-        background: #2b2b2b;
-        color: #ffffff;
-        border: 1px solid #1a1a1a;
-    }
-    
-    /* ===== Badges de status ===== */
-    .status-andamento {
-        background: #ffffff;
-        color: #444444;
-        border: 1px solid #bbbbbb;
-    }
-    .status-concluido {
-        background: #f0f0f0;
-        color: #111111;
-        border: 1px solid #cccccc;
-    }
-    .status-aguardando {
-        background: #e8e8e8;
-        color: #333333;
-        border: 1px solid #a8a8a8;
-    }
-    
-    /* ===== Métricas do dashboard ===== */
+
+    /* ===== Cards Estilo Industrial ===== */
     .metric-card {
-        background: #ffffff;
-        border: 1px solid #dcdcdc;
-        border-radius: 8px;
-        padding: 1.2rem;
-        text-align: center;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        background: white;
+        padding: 1.5rem;
+        border-radius: 6px;
+        border: 1px solid #eef0f2;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+        margin-bottom: 1rem;
     }
-    .metric-card h2 {
-        color: #1a1a1a;
+    .metric-label {
+        font-size: 0.7rem;
+        color: #888;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 0.8rem;
+    }
+    .metric-value {
         font-size: 2rem;
         font-weight: 700;
-        margin: 0;
+        color: #000;
+        letter-spacing: -0.5px;
     }
-    .metric-card p {
-        color: #666666;
-        font-size: 0.85rem;
-        margin: 0.3rem 0 0 0;
+    
+    /* ===== Títulos e Identidade ===== */
+    h1, h2, h3 {
+        color: #1a1a1a;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    .sub-head {
+        color: #999;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        margin-bottom: 0.3rem;
     }
-    
-    /* ===== Histórico ===== */
-    .historico-item {
-        background: #fdfdfd;
-        border-left: 4px solid #444444;
-        padding: 1rem 1.2rem;
-        border-radius: 0 4px 4px 0;
-        margin-bottom: 0.8rem;
-        border-top: 1px solid #eeeeee;
-        border-right: 1px solid #eeeeee;
-        border-bottom: 1px solid #eeeeee;
-    }
-    .historico-item h4 {
-        color: #222222;
-        font-size: 0.95rem;
-        margin: 0 0 0.4rem 0;
-    }
-    .historico-item p {
-        color: #666666;
-        font-size: 0.82rem;
-        margin: 0.15rem 0;
-    }
-    
-    /* ===== Alertas de notificação ===== */
-    .alerta-box {
-        background: #fafafa;
-        border: 1px solid #cccccc;
-        border-radius: 4px;
-        padding: 0.8rem 1rem;
-        margin-bottom: 0.5rem;
-    }
-    .alerta-box p {
-        color: #111111;
-        font-size: 0.85rem;
-        margin: 0;
-    }
-    
-    /* ===== Botões estilizados ===== */
+
+    /* ===== Buttons Industrial ===== */
     .stButton > button {
-        border-radius: 4px;
-        font-weight: 500;
-        transition: all 0.2s ease;
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+        padding: 0.5rem 1.2rem !important;
+        transition: all 0.2s !important;
     }
-    .stButton > button[kind="primary"] {
-        background-color: #2b2b2b !important;
-        border-color: #1e1e1e !important;
+    /* Botão Principal: Preto total */
+    div.stButton > button[kind="primary"] {
+        background-color: #000000 !important;
         color: #ffffff !important;
+        border: 1px solid #000 !important;
     }
-    .stButton > button[kind="primary"]:hover {
-        background-color: #111111 !important;
-        border-color: #000000 !important;
-        color: #ffffff !important;
+    div.stButton > button[kind="primary"]:hover {
+        background-color: #222222 !important;
+    }
+
+    /* ===== Badges de classificação ===== */
+    .badge {
+        padding: 4px 10px;
+        border-radius: 3px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    .badge-sobrevivencia { background: #f0f1f3; color: #666; border: 1px solid #ddd; }
+    .badge-expansao { background: #000; color: #fff; }
+    .badge-autonomia { background: #ffffff; color: #000; border: 1px solid #1a1a1a; }
+    
+    /* ===== Status Tags (Badge de status simplificada) ===== */
+    .status-tag {
+        padding: 4px 10px;
+        border-radius: 3px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        background: #f0f0f0;
+        border: 1px solid #e0e0e0;
+        color: #444;
+    }
+
+    /* ===== Staging Badge ===== */
+    .staging-badge {
+        position: fixed;
+        bottom: 15px;
+        right: 15px;
+        background: #ffcc00;
+        color: #000;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        z-index: 9999;
+        border: 2px solid #000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
-    /* ===== Tabs ===== */
+    /* ===== Histórico e Detalhes ===== */
+    .historico-item {
+        background: #ffffff;
+        border-left: 3px solid #000;
+        padding: 1.2rem;
+        border-radius: 2px;
+        margin-bottom: 0.8rem;
+        border-top: 1px solid #f0f0f0;
+        border-right: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    /* ===== Tabs Industrial ===== */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2rem;
+        border-bottom: 1px solid #eee;
+    }
     .stTabs [data-baseweb="tab"] {
-        font-weight: 500;
-        color: #666666;
+        height: 45px;
+        background-color: transparent;
+        border-radius: 0px;
+        font-weight: 600;
+        color: #999;
     }
-    
-    /* ===== Divider ===== */
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: #e5e5e5;
-        margin: 1.5rem 0;
+    .stTabs [aria-selected="true"] {
+        color: #000 !important;
+        border-bottom: 2px solid #000 !important;
     }
+
 </style>
 """, unsafe_allow_html=True)
+
+if IS_STAGING:
+    st.markdown('<div class="staging-badge">🛠️ STAGING MODE</div>', unsafe_allow_html=True)
+
 
 
 # ==================================================
@@ -253,16 +232,6 @@ def badge_status(status):
         "Concluído": "status-concluido",
         "Aguardando Novo Ciclo": "status-aguardando"
     }
-    icones = {
-        "Em Andamento": "🔵",
-        "Concluído": "✅",
-        "Aguardando Novo Ciclo": "🟠"
-    }
-    classe = classes.get(status, "status-andamento")
-    icone = icones.get(status, "🔵")
-    return f'<span class="badge {classe}">{icone} {status}</span>'
-
-
 def formatar_data(data_iso):
     """Formata data ISO para dd/mm/aaaa."""
     if not data_iso:
@@ -278,34 +247,65 @@ def formatar_data(data_iso):
             return data_iso
 
 
-def renderizar_header():
-    """Renderiza o header principal com logo placeholder."""
-    st.markdown("""
-    <div class="header-container">
-        <h1>🏭 Sistema PDCA — Gestão de Melhoria Contínua</h1>
-        <p>Ferramenta interna de gestão Lean Manufacturing • Ciclos PDCA</p>
-    </div>
-    """, unsafe_allow_html=True)
+def renderizar_header(titulo="Dashboard", subtitulo="VISÃO GERAL INDUSTRIAL"):
+    """Renderiza o header no estilo Industrial Control."""
+    st.markdown(f'<div class="sub-head">{subtitulo}</div>', unsafe_allow_html=True)
+    st.markdown(f'<h2>{titulo}</h2>', unsafe_allow_html=True)
 
 
-def renderizar_metrica(valor, label, icone="📊"):
-    """Renderiza um card de métrica."""
+def renderizar_metrica(valor, label, icone=""):
+    """Renderiza um card de métrica Industrial."""
     st.markdown(f"""
     <div class="metric-card">
-        <h2>{icone} {valor}</h2>
-        <p>{label}</p>
+        <div class="metric-label">{label}</div>
+        <div class="metric-value">{valor}<span style="font-size: 1rem; color: #999; font-weight: 500; margin-left: 5px;">{icone}</span></div>
     </div>
     """, unsafe_allow_html=True)
+
+
+def renderizar_sidebar():
+    """Renderiza a sidebar UNILUX."""
+    with st.sidebar:
+        st.markdown(f"""
+        <div class="sidebar-header">
+            <div class="sidebar-logo">UNILUX {"(STG)" if IS_STAGING else ""}</div>
+            <div class="sidebar-sublogo">INDUSTRIAL OPTIMIZATION</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("### Navegação")
+        # Menu customizado
+        menu = {
+            "🏠 Dashboard": "dashboard",
+            "📋 Lista de PDCAs": "lista_pdcas",
+            "➕ Novo PDCA": "novo_pdca",
+        }
+        
+        # Só mostra admin se for admin
+        if st.session_state.get("usuario_logado") and st.session_state.usuario_logado.get("papel") == "admin":
+            menu["⚙️ Administração"] = "admin"
+            
+        for label, pagina in menu.items():
+            if st.button(label, use_container_width=True, key=f"nav_{pagina}"):
+                st.session_state.pagina = pagina
+                st.rerun()
+        
+        st.divider()
+        if st.button("🚪 Sair do Sistema", use_container_width=True):
+            st.session_state.usuario_logado = None
+            st.session_state.pagina = "dashboard"
+            st.rerun()
 
 
 def renderizar_lista_expander(lista, label="Ver PDCAs"):
-    """Renderiza um st.expander contendo a listagem simplificada dos PDCAs."""
+    """Renderiza um card moderno contendo a listagem simplificada dos PDCAs."""
     with st.expander(label):
         if not lista:
             st.caption("_Vazio_")
         else:
             for p in lista:
                 st.markdown(f"- **{p['titulo'] or 'Sem título'}** (👤 {p.get('responsavel', 'N/A')} | 📅 {formatar_data(p.get('prazo'))})")
+
 
 
 # ==================================================
@@ -342,89 +342,42 @@ if "usuario_logado" not in st.session_state:
     st.session_state.usuario_logado = None
 
 if not st.session_state.usuario_logado:
-    renderizar_header()
-    col1, col2, col3 = st.columns([1, 2, 1])
+    renderizar_header(titulo="Acesso Restrito", subtitulo="SISTEMA PDCA UNILUX")
+    
+    col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
-        st.markdown("<h3 style='text-align: center; color: #1e293b; margin-top: 50px;'>🔐 Acesso Restrito</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #64748b;'>Faça login para acessar o sistema PDCA.</p>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="metric-card" style="margin-top: 2rem; padding: 2.5rem;">
+            <p class="sub-head" style="text-align: center;">AUTENTICAÇÃO</p>
+            <h3 style="text-align: center; margin-bottom: 2rem;">Entre com suas credenciais</h3>
+        """, unsafe_allow_html=True)
+        
         with st.form("form_login"):
-            username = st.text_input("Usuário")
+            username = st.text_input("Usuário (Username)")
             senha = st.text_input("Senha", type="password")
-            submit = st.form_submit_button("Entrar", use_container_width=True, type="primary")
+            submit = st.form_submit_button("Acessar Sistema", use_container_width=True, type="primary")
             if submit:
                 usuario = auth.autenticar(username, senha)
                 if usuario:
                     st.session_state.usuario_logado = usuario
                     st.rerun()
                 else:
-                    st.error("❌ Usuário ou senha incorretos.")
+                    st.error("❌ Credenciais incorretas.")
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.caption("Esqueceu sua senha? Entre em contato com a supervisão industrial.")
                     
-    st.stop()  # Impede que o restante da aplicação carregue
-
+    st.stop()
 
 # ==================================================
-# TOPBAR HORIZONTAL — NAVEGAÇÃO
+# SIDEBAR NAVEGAÇÃO
 # ==================================================
 
-import os
-st.markdown('<div style="padding: 10px 0; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px;">', unsafe_allow_html=True)
-col_logo, col_nav, col_vazio, col_user = st.columns([2, 5, 1, 3])
+renderizar_sidebar()
 
-with col_logo:
-    if os.path.exists("logo.png"):
-        st.image("logo.png", width=140)
-    elif os.path.exists("logo.jpg"):
-        st.image("logo.jpg", width=140)
-    elif os.path.exists("logo.jpeg"):
-        st.image("logo.jpeg", width=140)
-    else:
-        st.markdown("<b>Unilux PDCA</b>", unsafe_allow_html=True)
+# Pequeno ajuste de espaçamento para o conteúdo principal
+st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
-with col_nav:
-    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
-    is_admin = st.session_state.usuario_logado.get("papel") == "admin"
-    
-    # Criamos colunas dinâmicas para os botões do menu horizontal
-    if is_admin:
-        cols_menu = st.columns(4)
-    else:
-        cols_menu = st.columns(3)
-        
-    def btn_type(p):
-        return "primary" if st.session_state.pagina == p else "secondary"
-        
-    with cols_menu[0]:
-        if st.button("📊 Dashboard", type=btn_type("dashboard"), use_container_width=True):
-            st.session_state.pagina = "dashboard"
-            st.rerun()
-    with cols_menu[1]:
-        if st.button("➕ Novo PDCA", type=btn_type("novo_pdca"), use_container_width=True):
-            st.session_state.pagina = "novo_pdca"
-            st.rerun()
-    with cols_menu[2]:
-        if st.button("📋 Lista de PDCAs", type=btn_type("lista_pdcas"), use_container_width=True):
-            st.session_state.pagina = "lista_pdcas"
-            st.rerun()
-            
-    if is_admin:
-        with cols_menu[3]:
-            if st.button("⚙️ Administração", type=btn_type("admin"), use_container_width=True):
-                st.session_state.pagina = "admin"
-                st.rerun()
-
-with col_user:
-    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
-    u_nome = st.session_state.usuario_logado.get("nome", "Usuário")
-    c1, c2 = st.columns([2, 1])
-    with c1:
-        st.markdown(f"<div style='text-align: right; padding-top: 5px;'>👤 Olá, <b>{u_nome}</b></div>", unsafe_allow_html=True)
-    with c2:
-        if st.button("Sair"):
-            st.session_state.usuario_logado = None
-            st.session_state.pagina = "dashboard"
-            st.rerun()
-
-st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ==================================================
