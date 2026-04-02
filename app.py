@@ -19,13 +19,12 @@ from notificacoes import (
     verificar_notificacoes, enviar_notificacao_realizacao_gerente
 )
 
-# Detecta se estamos em staging ou main (para o badge visual)
-# No Streamlit Cloud, podemos olhar a variável de ambiente ou apenas o nome do branch se disponível
+# Tenta identificar se o ambiente é staging via secrets do Streamlit
+# Se você quiser que o badge apareça, adicione [env] e status="staging" no Secrets do Streamlit Cloud
 IS_STAGING = False
 try:
-    import subprocess
-    branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
-    IS_STAGING = (branch == "staging")
+    if st.secrets.get("env") and st.secrets["env"].get("status") == "staging":
+        IS_STAGING = True
 except:
     pass
 
@@ -35,6 +34,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
 
 
 # ==================================================
