@@ -1563,12 +1563,37 @@ def pagina_admin():
         if st.button("🚀 Iniciar Migração para o Banco de Dados", type="primary"):
             with st.spinner("Copiando PDCAs para a nuvem... aguarde."):
                 try:
-                    import migrar_para_supabase
-                    migrar_para_supabase.migrar()
-                    st.success("✅ Migração concluída com sucesso! Recarregue a página (ou clique em Dashboard) para ver seus PDCAs.")
+                    import json
+                    from supabase_client import get_client
+                    
+                    with open("pdcas.json", "r", encoding="utf-8") as f:
+                        dados = json.load(f)
+                    
+                    sb = get_client()
+                    pdcas = dados.get("pdcas", [])
+                    sucesso_count = 0
+                    for pdca in pdcas:
+                        row = {
+                            "id": pdca["id"],
+                            "titulo": pdca.get("titulo", ""),
+                            "classificacao": pdca.get("classificacao", "Expansão"),
+                            "responsavel": pdca.get("responsavel", ""),
+                            "email_responsavel": pdca.get("email_responsavel", ""),
+                            "email_gerente": pdca.get("email_gerente", ""),
+                            "prazo": pdca.get("prazo", ""),
+                            "status": pdca.get("status", "Em Andamento"),
+                            "planejar": pdca.get("planejar", {}),
+                            "historico": pdca.get("historico", []),
+                            "criado_em": pdca.get("criado_em", ""),
+                            "atualizado_em": pdca.get("atualizado_em", ""),
+                        }
+                        sb.table("pdcas").upsert(row).execute()
+                        sucesso_count += 1
+                        
+                    st.success(f"✅ {sucesso_count} PDCAs foram transportados para a nuvem com sucesso! Clique na aba 'Lista de PDCAs' ou 'Dashboard' para ver tudo.")
                     st.balloons()
                 except Exception as e:
-                    st.error(f"Erro durante a migração: {e}")
+                    st.error(f"Erro durante a leitura ou salvamento: {e}")
                     
     with t_me:
         st.markdown("#### Alterar as minhas credenciais")
