@@ -1555,7 +1555,7 @@ def pagina_admin():
     st.markdown("### ⚙️ Administração de Usuários")
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
     
-    t_add, t_list, t_me, t_mig = st.tabs(["👥 Lista de Usuários", "➕ Adicionar Usuário", "🔑 Meus Dados", "🛠️ Migração de Dados"])
+    t_list, t_add, t_me, t_mig = st.tabs(["👥 Lista de Usuários", "➕ Adicionar Usuário", "🔑 Meus Dados", "🛠️ Migração de Dados"])
     
     with t_mig:
         st.markdown("#### Recuperar dados antigos (JSON)")
