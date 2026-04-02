@@ -1,10 +1,14 @@
-# ==================================================
-# app.py
-# Sistema PDCA — Aplicação principal Streamlit
-# Gestão de ciclos de melhoria contínua (PDCA + Lean)
-# ==================================================
-
 import streamlit as st
+
+# MUST BE THE FIRST STREAMLIT COMMAND
+st.set_page_config(
+    page_title="Unilux | Gestão PDCA", 
+    page_icon="🏗️", 
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+import os
 from datetime import datetime, timedelta
 
 # Importa módulos internos
@@ -20,7 +24,6 @@ from notificacoes import (
 )
 
 # Tenta identificar se o ambiente é staging via secrets do Streamlit
-# Se você quiser que o badge apareça, adicione [env] e status="staging" no Secrets do Streamlit Cloud
 IS_STAGING = False
 try:
     if st.secrets.get("env") and st.secrets["env"].get("status") == "staging":
@@ -28,12 +31,7 @@ try:
 except:
     pass
 
-st.set_page_config(
-    page_title=f"Unilux {'(STAGING)' if IS_STAGING else ''} | Gestão PDCA", 
-    page_icon="🏗️", 
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+
 
 
 
