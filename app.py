@@ -47,12 +47,10 @@ st.markdown("""
         background-color: var(--bg-color);
     }
 
-    /* Ocultar elementos padrão do Streamlit */
     [data-testid="stSidebarNav"] { display: none; }
     [data-testid="stToolbar"] { visibility: hidden; }
     header { visibility: hidden; }
 
-    /* Estilização da Sidebar */
     [data-testid="stSidebar"] {
         background-color: var(--sidebar-bg);
         border-right: 1px solid var(--border-color);
@@ -79,7 +77,6 @@ st.markdown("""
         letter-spacing: 2px;
     }
 
-    /* Cards de Métrica */
     .metric-box {
         background: white;
         border-left: 5px solid #000;
@@ -103,7 +100,6 @@ st.markdown("""
         margin-top: 5px;
     }
 
-    /* Cabeçalho de Página */
     .page-header {
         margin-bottom: 30px;
         border-left: 8px solid #000;
@@ -117,17 +113,12 @@ st.markdown("""
         margin: 0;
     }
 
-    /* Rows de Lista Estilizadas */
     .pdca-row-container {
         background: white;
         padding: 18px 24px;
         border-radius: 8px;
         border: 1px solid #E5E7EB;
         margin-bottom: 8px;
-        transition: all 0.2s;
-    }
-    .pdca-row-container:hover {
-        border-color: #000;
     }
 
     .actions-bar {
@@ -141,7 +132,6 @@ st.markdown("""
         gap: 10px;
     }
 
-    /* Badges */
     .badge {
         padding: 3px 10px;
         border-radius: 4px;
@@ -154,17 +144,10 @@ st.markdown("""
     .bg-red { background: #FEE2E2; color: #991B1B; border: 1px solid #F87171; }
     .bg-yellow { background: #FEF3C7; color: #92400E; border: 1px solid #FBBF24; }
 
-    /* Forms */
-    .stTextInput input, .stTextArea textarea, .stSelectbox select {
-        border-radius: 4px !important;
-    }
-
-    /* Botões */
     .stButton > button {
         border-radius: 4px !important;
         font-weight: 600 !important;
         text-transform: uppercase !important;
-        font-size: 0.75rem !important;
     }
     
     .stButton > button[kind="primary"] {
@@ -180,6 +163,15 @@ st.markdown("""
         padding: 12px;
         margin-bottom: 8px;
         border-radius: 4px;
+    }
+
+    /* Estilo para Itens de Execução */
+    .execution-item {
+        background: #FFFFFF;
+        border: 1px solid #EEE;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
     }
 
 </style>
@@ -283,9 +275,8 @@ def pagina_dashboard():
 
 def pagina_novo_pdca():
     renderizar_header("Planejamento", "NOVO CICLO PDCA")
-    if "num_topicos_novo" not in st.session_state: st.session_state.num_topicos_novo = 1
-
-    with st.form("form_novo"):
+    
+    with st.form("form_novo", clear_on_submit=True):
         c1, c2 = st.columns(2)
         with c1:
             titulo = st.text_input("Título do Projeto *")
@@ -296,28 +287,30 @@ def pagina_novo_pdca():
             prazo = st.date_input("Prazo Final *", value=datetime.now() + timedelta(days=30))
             email_ger = st.selectbox("Gerente Resp.", ["gabriel.rodrigues@unilux.com.br"])
 
-        st.markdown("---")
+        st.divider()
         st.write("#### P (PLAN)")
-        desc = st.text_area("Descrição do Problema *")
-        obj = st.text_area("Objetivo/Meta *")
+        desc = st.text_area("Descrição/Problema *", height=100)
+        obj = st.text_area("Objetivo/Metas *", height=100)
         
-        st.write("Tópicos de Controle (até 10):")
+        st.write("**Tópicos de Controle** (Até 10):")
         topicos = []
+        t_cols = st.columns(2)
         for i in range(10):
-            t = st.text_input(f"Tópico {i+1}", key=f"nt_{i}")
+            target_col = t_cols[0] if i < 5 else t_cols[1]
+            t = target_col.text_input(f"Tópico {i+1}", key=f"nt_{i}")
             if t: topicos.append(t)
 
-        if st.form_submit_button("CRIAR PDCA", type="primary"):
-            if titulo and desc and obj:
+        if st.form_submit_button("CRIAR E INICIAR", type="primary", use_container_width=True):
+            if titulo and desc:
                 criar_pdca({
                     "titulo": titulo, "classificacao": classe, "responsavel": resp,
                     "email_responsavel": email_resp, "email_gerente": email_ger,
                     "prazo": prazo.strftime("%Y-%m-%d"), "status": "Em Andamento",
                     "planejar": {"descricao": desc, "objetivo": obj, "topicos": topicos}
                 })
-                st.success("Criado!")
+                st.success("PDCA Criado!")
                 st.balloons()
-            else: st.error("Preencha os campos obrigatórios (*)")
+            else: st.error("Título e Descrição são obrigatórios.")
 
 def pagina_lista_pdcas():
     renderizar_header("Repositório", "LISTA DE PDCAS")
@@ -352,102 +345,140 @@ def pagina_lista_pdcas():
                 if st.session_state.get('confirm_del') == p['id']:
                     remover_pdca(p['id']); st.rerun()
                 else:
-                    st.session_state.confirm_del = p['id']; st.warning("Confirme?")
+                    st.session_state.confirm_del = p['id']; st.warning("Confirmar?")
             st.markdown("</div>", unsafe_allow_html=True)
 
 def pagina_realizar_pdca():
     p = st.session_state.pdca_selecionado
-    renderizar_header(f"Execução: {p['titulo']}", "REGISTRO DO CICLO")
+    renderizar_header(f"Execução: {p['titulo']}", "CADERNO DE CAMPO")
     if st.button("← VOLTAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
     
-    st.write("**Planejado:**", p['planejar'].get('descricao'))
+    st.markdown(f"**Planejamento:** {p['planejar'].get('descricao', '')}")
+    st.divider()
+
+    st.markdown("#### ✅ Check-list de Execução")
     topicos = p['planejar'].get('topicos', [])
     respostas = {}
-    for t in topicos:
-        respostas[t] = st.radio(f"Status: {t}", ["Conforme", "Não Conforme"], horizontal=True)
     
-    obs = st.text_area("Observações")
-    if st.button("FINALIZAR CICLO", type="primary"):
-        registrar_realizacao(p['id'], {"observacoes": obs, "conforme": list(respostas.values()) == ["Conforme"]*len(topicos)}, True)
-        st.success("Concluído!")
+    if not topicos:
+        st.info("Nenhum tópico de controle definido.")
+    else:
+        for i, t in enumerate(topicos):
+            st.markdown(f"**Tópico {i+1}: {t}**")
+            c_st, c_obs = st.columns([1, 2])
+            status = c_st.radio("Status", ["Conforme", "Não Conforme"], key=f"chk_st_{i}", horizontal=True, label_visibility="collapsed")
+            comment = c_obs.text_input("Observação / Justificativa", key=f"chk_obs_{i}", placeholder="Se houver desvio, detalhe aqui...")
+            respostas[t] = {"status": status, "obs": comment}
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+    final_obs = st.text_area("Observações Gerais da Execução")
+    check = st.checkbox("Declaro que todos os itens foram conferidos conforme o padrão.")
+    
+    st.divider()
+    c1, c2 = st.columns(2)
+    if c1.button("✅ FINALIZAR PDCA", type="primary", use_container_width=True):
+        if check:
+            all_conforme = all(r["status"] == "Conforme" for r in respostas.values())
+            registrar_realizacao(p['id'], {"observacoes": final_obs, "detalhes_topicos": respostas, "conforme": all_conforme}, True)
+            st.success("PDCA Concluído!")
+            st.session_state.pagina = "lista_pdcas"; st.rerun()
+        else: st.warning("É necessário confirmar o checklist.")
+        
+    if c2.button("🟠 REABRIR (NOVO CICLO)", use_container_width=True):
+        registrar_realizacao(p['id'], {"observacoes": final_obs, "detalhes_topicos": respostas, "conforme": False}, False)
+        st.warning("Ciclo reiniciado para ajuste.")
         st.session_state.pagina = "lista_pdcas"; st.rerun()
 
 def pagina_visualizar_pdca():
     p = st.session_state.pdca_selecionado
-    renderizar_header(p['titulo'], "DETALHES")
+    renderizar_header(p['titulo'], "CONSULTA DETALHADA")
     if st.button("← VOLTAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
     
-    st.markdown(f"**Líder:** {p['responsavel']} | **Prazo:** {formatar_data(p['prazo'])}")
-    st.markdown(f"**Status:** {b_status(p['status'])}", unsafe_allow_html=True)
+    st.write(f"**Líder:** {p['responsavel']} | **Prazo Final:** {formatar_data(p['prazo'])}")
+    st.markdown(f"**Status:** {b_status(p['status'])} &nbsp; **Classe:** {b_classe(p['classificacao'])}", unsafe_allow_html=True)
     
-    t1, t2 = st.tabs(["Detalhamento", "Linha do Tempo"])
-    with t1:
-        st.write("**Descrição:**", p['planejar'].get('descricao'))
-        st.write("**Objetivo:**", p['planejar'].get('objetivo'))
-    with t2:
-        for h in p.get('historico', []):
-            st.markdown(f"**{formatar_data(h['data'])}**: {h.get('observacoes', 'OK')}")
+    t_aba1, t_aba2, t_aba3 = st.tabs(["📋 Planejamento", "✅ Tópicos Atuais", "🕒 Histórico"])
+    
+    with t_aba1:
+        st.markdown("**Descrição do Problema:**")
+        st.info(p['planejar'].get('descricao', 'N/A'))
+        st.markdown("**Objetivo Esperado:**")
+        st.success(p['planejar'].get('objetivo', 'N/A'))
+
+    with t_aba2:
+        st.write("**Itens de Controle Planejados:**")
+        tps = p['planejar'].get('topicos', [])
+        if tps:
+            for i, t in enumerate(tps):
+                st.write(f"{i+1}. {t}")
+        else:
+            st.caption("Nenhum tópico definido.")
+
+    with t_aba3:
+        hist = p.get('historico', [])
+        if not hist: st.caption("Nenhum ciclo registrado no histórico.")
+        for h in reversed(hist):
+            with st.expander(f"Ciclo em {formatar_data(h['data'])} - Por {h.get('usuario', 'N/A')}"):
+                st.write(f"**Obs Gerais:** {h.get('observacoes', 'OK')}")
+                if "detalhes_topicos" in h:
+                    st.write("**Detalhamento por item:**")
+                    for t, res in h["detalhes_topicos"].items():
+                        icon = "✅" if res["status"] == "Conforme" else "❌"
+                        st.write(f"{icon} **{t}**: {res['obs']}")
 
 def pagina_editar_pdca():
     p = st.session_state.pdca_selecionado
-    renderizar_header(f"Editar: {p['titulo']}", "CONFIGURAÇÃO DO CICLO")
+    renderizar_header(f"Editar: {p['titulo']}", "AJUSTE DO PLANEJAMENTO")
     if st.button("← CANCELAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
     
-    # Preparamos os dados atuais
-    planejar = p.get('planejar', {})
-    
-    with st.form("edit_master"):
+    pl = p.get('planejar', {})
+    with st.form("edit_master_full"):
         c1, c2 = st.columns(2)
         with c1:
             new_title = st.text_input("Título", value=p['titulo'])
             new_resp = st.selectbox("Líder", ["Camila", "Gabriel", "Guilherme"], index=["Camila", "Gabriel", "Guilherme"].index(p['responsavel']))
+            new_email = st.text_input("Email Líder", value=p.get('email_responsavel', ''))
         with c2:
             new_cl = st.selectbox("Classe", ["Sobrevivência", "Expansão", "Autonomia"], index=["Sobrevivência", "Expansão", "Autonomia"].index(p['classificacao']))
-            try:
-                dt_val = datetime.strptime(p['prazo'], "%Y-%m-%d").date()
-            except:
-                dt_val = datetime.now().date()
+            try: dt_val = datetime.strptime(p['prazo'], "%Y-%m-%d").date()
+            except: dt_val = datetime.now().date()
             new_prazo = st.date_input("Prazo", value=dt_val)
+            new_ger = st.text_input("Email Gerente", value=p.get('email_gerente', ''))
             
         st.divider()
-        st.write("#### Editar Planejamento (P)")
-        new_desc = st.text_area("Descrição", value=planejar.get('descricao', ''))
-        new_obj = st.text_area("Objetivo", value=planejar.get('objetivo', ''))
+        st.write("#### Detalhamento (P)")
+        new_desc = st.text_area("Descrição", value=pl.get('descricao', ''), height=150)
+        new_obj = st.text_area("Objetivo", value=pl.get('objetivo', ''), height=150)
         
-        # Tópicos
-        old_topicos = planejar.get('topicos', [])
-        cur_topicos = []
+        st.write("#### Tópicos de Controle")
+        old_tps = pl.get('topicos', [])
+        new_tps = []
+        tc1, tc2 = st.columns(2)
         for i in range(10):
-            val = old_topicos[i] if i < len(old_topicos) else ""
-            t_input = st.text_input(f"Tópico {i+1}", value=val, key=f"et_{i}")
-            if t_input: cur_topicos.append(t_input)
+            col = tc1 if i < 5 else tc2
+            val = old_tps[i] if i < len(old_tps) else ""
+            txt = col.text_input(f"Tópico {i+1}", value=val, key=f"edit_t_{i}")
+            if txt: new_tps.append(txt)
             
-        if st.form_submit_button("SALVAR TODAS AS ALTERAÇÕES", type="primary"):
+        if st.form_submit_button("SALVAR ALTERAÇÕES", type="primary", use_container_width=True):
             novos_dados = {
-                "titulo": new_title,
-                "responsavel": new_resp,
-                "classificacao": new_cl,
-                "prazo": new_prazo.strftime("%Y-%m-%d"),
-                "planejar": {
-                    "descricao": new_desc,
-                    "objetivo": new_obj,
-                    "topicos": cur_topicos
-                },
+                "titulo": new_title, "responsavel": new_resp, "email_responsavel": new_email,
+                "email_gerente": new_ger, "classificacao": new_cl, "prazo": new_prazo.strftime("%Y-%m-%d"),
+                "planejar": {"descricao": new_desc, "objetivo": new_obj, "topicos": new_tps},
                 "atualizado_em": datetime.now().isoformat()
             }
             if atualizar_pdca(p['id'], novos_dados):
-                st.success("PDCAs atualizado com sucesso!")
+                st.success("Atualizado!")
                 st.session_state.pagina = "lista_pdcas"; st.rerun()
-            else:
-                st.error("Erro ao salvar no banco de dados.")
+            else: st.error("Erro ao salvar.")
 
 def pagina_admin():
-    renderizar_header("Administração", "CONTROLE DE ACESSOS E DADOS")
+    renderizar_header("Administração", "CONTROLE E DADOS")
     t1, t2, t3, t4 = st.tabs(["👥 Usuários", "➕ Novo Usuário", "🔑 Meus Dados", "🛠️ Migração"])
     
     with t1:
         for u in auth.listar_usuarios():
-            st.write(f"**{u['nome']}** (`{u['username']}`) - {u['papel']}")
+            st.write(f"👤 **{u['nome']}** (`{u['username']}`) - {u['papel']}")
             st.divider()
     with t2:
         with st.form("add_u_adm"):
@@ -455,28 +486,30 @@ def pagina_admin():
             if st.form_submit_button("CADASTRAR"):
                 if auth.adicionar_usuario(u, p, n, "operador"): st.success("OK!"); st.rerun()
     with t3:
-        with st.form("my_data"):
-            st.write("Alterar Senha")
-            if st.form_submit_button("ATUALIZAR"): st.info("Funcionalidade em desenvolvimento")
+        st.write("Alterar dados do seu perfil.")
+        with st.form("me_data"):
+            me_n = st.text_input("Nome", value=st.session_state.usuario_logado['nome'])
+            if st.form_submit_button("SALVAR"): st.success("Atualizado (Em Breve)")
     with t4:
-        st.warning("Importar do JSON antigo para o Banco.")
-        if st.button("EXECUTAR MIGRAÇÃO"):
-            st.info("Iniciando...")
+        st.warning("Importar do JSON antigo para o Banco de Dados.")
+        if st.button("EXECUTAR MIGRAÇÃO (JSON -> CLOUD)"):
+            st.info("Iniciando processo...")
 
-# 14. INICIALIZAÇÃO E ROUTING
+# 15. MAIN APP ENTRY
 if "usuario_logado" not in st.session_state: st.session_state.usuario_logado = None
 if "pagina" not in st.session_state: st.session_state.pagina = "dashboard"
 
 if not st.session_state.usuario_logado:
+    st.markdown("<br><br>", unsafe_allow_html=True)
     c1, m, c3 = st.columns([1, 1.2, 1])
     with m:
-        st.markdown("<div style='text-align:center; padding:20px; background:white; border-radius:10px; border:1px solid #DDD; margin-top:50px;'><h2>UNILUX</h2><p style='color:#666;letter-spacing:1px;font-size:0.8rem;'>INDUSTRIAL ACCESS</p></div>", unsafe_allow_html=True)
-        with st.form("login_main"):
+        st.markdown("<div style='text-align:center; padding:20px; background:white; border-radius:10px; border:1px solid #DDD;'><h2>UNILUX</h2><p style='color:#666;letter-spacing:1px;font-size:0.8rem;'>INDUSTRIAL ACCESS</p></div>", unsafe_allow_html=True)
+        with st.form("login_app"):
             ui = st.text_input("Usuário"); pi = st.text_input("Senha", type="password")
             if st.form_submit_button("ENTRAR", use_container_width=True, type="primary"):
                 user = auth.autenticar(ui, pi)
                 if user: st.session_state.usuario_logado = user; st.rerun()
-                else: st.error("Incorreto")
+                else: st.error("Acesso Negado")
     st.stop()
 
 renderizar_sidebar()
