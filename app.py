@@ -245,131 +245,86 @@ def renderizar_sidebar():
             st.session_state.pagina = "dashboard"
             st.rerun()
 
-# 6. PÁGINA: DASHBOARD
+# 6. PÁGINAS DO SISTEMA
+
 def pagina_dashboard():
     renderizar_header("Painel de Performance", "VISÃO GERAL DA OPERAÇÃO")
-    
     todos = listar_pdcas()
-    total = len(todos)
     andamento = [p for p in todos if p["status"] == "Em Andamento"]
-    concluidos = [p for p in todos if p["status"] == "Concluído"]
-
-    # Métricas de Status
+    
     c1, c2, c3, c4 = st.columns(4)
-    with c1: renderizar_metrica(total, "Total de PDCAs")
+    with c1: renderizar_metrica(len(todos), "Total de Processos")
     with c2: renderizar_metrica(len(andamento), "Em Execução")
-    with c3: renderizar_metrica(len(concluidos), "Finalizados")
+    with c3: renderizar_metrica(len([p for p in todos if p["status"] == "Concluído"]), "Finalizados")
     with c4: renderizar_metrica(len([p for p in todos if p["classificacao"] == "Sobrevivência"]), "Riscos Ativos")
-
+    
     st.divider()
-
-    # Análise de Prazos
     st.markdown("### ⏳ Análise de Prazos")
     hoje = datetime.now().date()
     atrasados = []
     no_prazo = []
     for p in andamento:
         try:
-            prazo_dt = datetime.strptime(p["prazo"], "%Y-%m-%d").date()
-            if prazo_dt < hoje: atrasados.append(p)
+            p_dt = datetime.strptime(p["prazo"], "%Y-%m-%d").date() if "-" in p["prazo"] else datetime.fromisoformat(p["prazo"]).date()
+            if p_dt < hoje: atrasados.append(p)
             else: no_prazo.append(p)
         except: no_prazo.append(p)
 
     col1, col2 = st.columns(2)
-    with col1:
-        st.markdown(f"<div style='color:green; font-weight:700;'>NO PRAZO: {len(no_prazo)}</div>", unsafe_allow_html=True)
-    with col2:
-        st.markdown(f"<div style='color:red; font-weight:700;'>ATRASADOS: {len(atrasados)}</div>", unsafe_allow_html=True)
+    with col1: st.success(f"DENTRO DO PRAZO: {len(no_prazo)}")
+    with col2: st.error(f"ATRASADOS: {len(atrasados)}")
 
-    # Notificações Próximas
     proximos = obter_pdcas_proximos_prazo(7)
     if proximos:
         st.markdown("---")
         st.markdown("#### ⏰ Próximos Vencimentos (7 dias)")
         for p in proximos:
-            st.markdown(f"""
-            <div class="alerta-box">
-                <b>{p['titulo']}</b> - {p['responsavel']} | Prazo: {formatar_data(p['prazo'])}
-            </div>
-            """, unsafe_allow_html=True)
-            # Auto-email trigger logic (placeholder)
-            
-    # Atividades Recentes
-    st.markdown("---")
-    st.markdown("#### 📋 Atividades Recentes")
-    for p in sorted(todos, key=lambda x: x.get("atualizado_em", ""), reverse=True)[:5]:
-        st.markdown(f"""
-        <div class="pdca-row-container">
-            <div style='display:flex; justify-content: space-between;'>
-                <b>{p['titulo']}</b>
-                <div>{b_classe(p['classificacao'])} {b_status(p['status'])}</div>
-            </div>
-            <div style='font-size:0.8rem; color:#666; margin-top:5px;'>Resp: {p['responsavel']} | Atualizado em: {formatar_data(p.get('atualizado_em',''))}</div>
-        </div>
-        """, unsafe_allow_html=True)
+            st.markdown(f'<div class="alerta-box">⚠️ <b>{p["titulo"]}</b> ({p["responsavel"]}) - Vence em: {formatar_data(p["prazo"])}</div>', unsafe_allow_html=True)
 
-# 7. PÁGINA: NOVO PDCA
 def pagina_novo_pdca():
     renderizar_header("Planejamento", "NOVO CICLO PDCA")
-    
     if "num_topicos_novo" not in st.session_state: st.session_state.num_topicos_novo = 1
 
-    with st.container():
-        col1, col2 = st.columns(2)
-        with col1:
-            titulo = st.text_input("Título do Projeto *", placeholder="Ex: Ajuste de Máquina X")
+    with st.form("form_novo"):
+        c1, c2 = st.columns(2)
+        with c1:
+            titulo = st.text_input("Título do Projeto *")
             resp = st.selectbox("Líder do Projeto *", ["Camila", "Gabriel", "Guilherme"])
             email_resp = st.text_input("Email do Líder", value=f"{resp.lower()}@unilux.com.br")
-        with col2:
+        with c2:
             classe = st.selectbox("Classificação *", ["Sobrevivência", "Expansão", "Autonomia"])
             prazo = st.date_input("Prazo Final *", value=datetime.now() + timedelta(days=30))
             email_ger = st.selectbox("Gerente Resp.", ["gabriel.rodrigues@unilux.com.br"])
 
         st.markdown("---")
-        st.write("#### 1. P (PLAN)")
-        c_p1, c_p2 = st.columns(2)
-        with c_p1:
-            desc = st.text_area("Descrição/Problema *", height=150)
-            st.write("**Tópicos de Controle** (Até 10)")
-            for i in range(st.session_state.num_topicos_novo):
-                st.text_input(f"Tópico {i+1}", key=f"topic_{i}")
-            if st.session_state.num_topicos_novo < 10:
-                if st.button("➕ Adicionar Tópico"):
-                    st.session_state.num_topicos_novo += 1
-                    st.rerun()
-        with c_p2:
-            obj = st.text_area("Objetivo/Metas *", height=150)
-            
-        if st.button("SALVAR E INICIAR", type="primary", use_container_width=True):
+        st.write("#### P (PLAN)")
+        desc = st.text_area("Descrição do Problema *")
+        obj = st.text_area("Objetivo/Meta *")
+        
+        st.write("Tópicos de Controle (até 10):")
+        topicos = []
+        for i in range(10):
+            t = st.text_input(f"Tópico {i+1}", key=f"nt_{i}")
+            if t: topicos.append(t)
+
+        if st.form_submit_button("CRIAR PDCA", type="primary"):
             if titulo and desc and obj:
-                topicos = [st.session_state.get(f"topic_{i}", "") for i in range(st.session_state.num_topicos_novo)]
                 criar_pdca({
                     "titulo": titulo, "classificacao": classe, "responsavel": resp,
                     "email_responsavel": email_resp, "email_gerente": email_ger,
                     "prazo": prazo.strftime("%Y-%m-%d"), "status": "Em Andamento",
-                    "planejar": {"descricao": desc, "objetivo": obj, "topicos": [t for t in topicos if t]}
+                    "planejar": {"descricao": desc, "objetivo": obj, "topicos": topicos}
                 })
-                st.session_state.num_topicos_novo = 1
-                st.success("PDCA Iniciado!")
+                st.success("Criado!")
                 st.balloons()
-            else: st.error("Campos obrigatórios (*) sem preenchimento.")
+            else: st.error("Preencha os campos obrigatórios (*)")
 
-# 8. PÁGINA: LISTA DE PDCAS
 def pagina_lista_pdcas():
     renderizar_header("Repositório", "LISTA DE PDCAS")
     todos = listar_pdcas()
     
-    # Filtros simples
-    c_f1, c_f2 = st.columns([3, 1])
-    busca = c_f1.text_input("Buscar por título...")
-    status_f = c_f2.selectbox("Filtro", ["Todos", "Em Andamento", "Concluído"])
-
-    filtrados = [p for p in todos if (not busca or busca.lower() in p['titulo'].lower())]
-    if status_f != "Todos": filtrados = [p for p in filtrados if p['status'] == status_f]
-
-    if not filtrados:
-        st.info("Nenhum item encontrado.")
-        return
+    busca = st.text_input("🔍 Buscar por título...")
+    filtrados = [p for p in todos if not busca or busca.lower() in p['titulo'].lower()]
 
     for p in filtrados:
         st.markdown(f"""
@@ -379,166 +334,156 @@ def pagina_lista_pdcas():
                 <div>{b_status(p['status'])}</div>
             </div>
             <div style='font-size:0.85rem; color:#666;'>
-                Líder: {p['responsavel']} | Prazo: {formatar_data(p['prazo'])} | {p['classificacao']}
+                Resp: {p['responsavel']} | Prazo: {formatar_data(p['prazo'])} | {p['classificacao']}
             </div>
         </div>
         """, unsafe_allow_html=True)
         
-        # BARRA DE AÇÕES
         with st.container():
             st.markdown("<div class='actions-bar'>", unsafe_allow_html=True)
             cols = st.columns([1,1,1,1,4])
-            
-            if cols[0].button("🔄 Realizar", key=f"re_{p['id']}", help="Ir para execução"):
-                st.session_state.pdca_selecionado = p
-                st.session_state.pagina = "realizar_pdca"
-                st.rerun()
-                
-            if cols[1].button("👁️ Ver", key=f"vi_{p['id']}", help="Visualizar detalhes"):
-                st.session_state.pdca_selecionado = p
-                st.session_state.pagina = "visualizar_pdca"
-                st.rerun()
-                
-            if cols[2].button("📝 Editar", key=f"ed_{p['id']}", help="Editar planejamento"):
-                st.session_state.pdca_selecionado = p
-                st.session_state.pagina = "editar_pdca"
-                st.rerun()
-                
-            if cols[3].button("🗑️ Excluir", key=f"ex_{p['id']}", help="Remover permanentemente"):
+            if cols[0].button("🔄 Realizar", key=f"re_{p['id']}"):
+                st.session_state.pdca_selecionado = p; st.session_state.pagina = "realizar_pdca"; st.rerun()
+            if cols[1].button("👁️ Ver", key=f"vi_{p['id']}"):
+                st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
+            if cols[2].button("📝 Editar", key=f"ed_{p['id']}"):
+                st.session_state.pdca_selecionado = p; st.session_state.pagina = "editar_pdca"; st.rerun()
+            if cols[3].button("🗑️ Excluir", key=f"ex_{p['id']}"):
                 if st.session_state.get('confirm_del') == p['id']:
-                    remover_pdca(p['id'])
-                    st.success("Removido!")
-                    st.rerun()
+                    remover_pdca(p['id']); st.rerun()
                 else:
-                    st.session_state.confirm_del = p['id']
-                    st.warning("Confirmar?")
+                    st.session_state.confirm_del = p['id']; st.warning("Confirme?")
             st.markdown("</div>", unsafe_allow_html=True)
 
-# 9. PÁGINA: REALIZAR PDCA
 def pagina_realizar_pdca():
     p = st.session_state.pdca_selecionado
-    renderizar_header(f"Execução: {p['titulo']}", "CADERNO DE CAMPO")
+    renderizar_header(f"Execução: {p['titulo']}", "REGISTRO DO CICLO")
     if st.button("← VOLTAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
     
-    st.markdown("#### ✅ Check-list de Execução")
+    st.write("**Planejado:**", p['planejar'].get('descricao'))
     topicos = p['planejar'].get('topicos', [])
-    if not topicos:
-        st.info("Este PDCA não possui tópicos de controle específicos.")
-    else:
-        for i, t in enumerate(topicos):
-            st.radio(f"{i+1}. {t}", ["Conforme", "Não Conforme"], key=f"chk_{i}", horizontal=True)
-            
-    obs = st.text_area("Relato da Execução / Justificativas")
+    respostas = {}
+    for t in topicos:
+        respostas[t] = st.radio(f"Status: {t}", ["Conforme", "Não Conforme"], horizontal=True)
     
-    st.divider()
-    c1, c2 = st.columns(2)
-    if c1.button("✅ CONCLUIR PROJETO", type="primary", use_container_width=True):
-        registrar_realizacao(p['id'], {"observacoes": obs}, True)
-        st.success("PDCA Concluído!")
-        st.session_state.pagina = "lista_pdcas"; st.rerun()
-    if c2.button("🟠 REABRIR (NOVO CICLO)", use_container_width=True):
-        registrar_realizacao(p['id'], {"observacoes": obs}, False)
-        st.warning("Novo ciclo agendado.")
+    obs = st.text_area("Observações")
+    if st.button("FINALIZAR CICLO", type="primary"):
+        registrar_realizacao(p['id'], {"observacoes": obs, "conforme": list(respostas.values()) == ["Conforme"]*len(topicos)}, True)
+        st.success("Concluído!")
         st.session_state.pagina = "lista_pdcas"; st.rerun()
 
-# 10. PÁGINA: VISUALIZAR PDCA
 def pagina_visualizar_pdca():
     p = st.session_state.pdca_selecionado
-    renderizar_header(p['titulo'], "CONSULTA DETALHADA")
+    renderizar_header(p['titulo'], "DETALHES")
     if st.button("← VOLTAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
     
-    col_a, col_b = st.columns([2, 1])
-    with col_a:
-        st.markdown(f"""
-        <div style='background:white; padding:20px; border-radius:8px; border:1px solid #EEE;'>
-            <b>Descrição:</b><br>{p['planejar'].get('descricao')}<br><br>
-            <b>Objetivo:</b><br>{p['planejar'].get('objetivo')}
-        </div>
-        """, unsafe_allow_html=True)
-    with col_b:
-        st.markdown(f"**Responsável:** {p['responsavel']}")
-        st.markdown(f"**Prazo:** {formatar_data(p['prazo'])}")
-        st.markdown(f"**Status:** {b_status(p['status'])}", unsafe_allow_html=True)
+    st.markdown(f"**Líder:** {p['responsavel']} | **Prazo:** {formatar_data(p['prazo'])}")
+    st.markdown(f"**Status:** {b_status(p['status'])}", unsafe_allow_html=True)
     
-    st.markdown("#### 🕒 Histórico de Ciclos")
-    for h in p.get('historico', []):
-        st.markdown(f"""
-        <div style='border-left: 3px solid #000; padding: 10px; margin-bottom:10px; background:#F9FAFB;'>
-            <small>{formatar_data(h['data'])} - Por: {h.get('usuario', 'N/A')}</small><br>
-            {h.get('observacoes', 'Sem observações')}
-        </div>
-        """, unsafe_allow_html=True)
+    t1, t2 = st.tabs(["Detalhamento", "Linha do Tempo"])
+    with t1:
+        st.write("**Descrição:**", p['planejar'].get('descricao'))
+        st.write("**Objetivo:**", p['planejar'].get('objetivo'))
+    with t2:
+        for h in p.get('historico', []):
+            st.markdown(f"**{formatar_data(h['data'])}**: {h.get('observacoes', 'OK')}")
 
-# 11. PÁGINA: EDITAR PDCA
 def pagina_editar_pdca():
     p = st.session_state.pdca_selecionado
-    renderizar_header(f"Editar: {p['titulo']}", "AJUSTE DO PLANEJAMENTO")
+    renderizar_header(f"Editar: {p['titulo']}", "CONFIGURAÇÃO DO CICLO")
     if st.button("← CANCELAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
     
-    with st.form("edit_f"):
-        t = st.text_input("Título", value=p['titulo'])
-        r = st.selectbox("Líder", ["Camila", "Gabriel", "Guilherme"], index=["Camila", "Gabriel", "Guilherme"].index(p['responsavel']))
-        cl = st.selectbox("Classe", ["Sobrevivência", "Expansão", "Autonomia"], index=["Sobrevivência", "Expansão", "Autonomia"].index(p['classificacao']))
-        if st.form_submit_button("SALVAR"):
-            atualizar_pdca(p['id'], {"titulo": t, "responsavel": r, "classificacao": cl})
-            st.success("Salvo!")
-            st.session_state.pagina = "lista_pdcas"; st.rerun()
+    # Preparamos os dados atuais
+    planejar = p.get('planejar', {})
+    
+    with st.form("edit_master"):
+        c1, c2 = st.columns(2)
+        with c1:
+            new_title = st.text_input("Título", value=p['titulo'])
+            new_resp = st.selectbox("Líder", ["Camila", "Gabriel", "Guilherme"], index=["Camila", "Gabriel", "Guilherme"].index(p['responsavel']))
+        with c2:
+            new_cl = st.selectbox("Classe", ["Sobrevivência", "Expansão", "Autonomia"], index=["Sobrevivência", "Expansão", "Autonomia"].index(p['classificacao']))
+            try:
+                dt_val = datetime.strptime(p['prazo'], "%Y-%m-%d").date()
+            except:
+                dt_val = datetime.now().date()
+            new_prazo = st.date_input("Prazo", value=dt_val)
+            
+        st.divider()
+        st.write("#### Editar Planejamento (P)")
+        new_desc = st.text_area("Descrição", value=planejar.get('descricao', ''))
+        new_obj = st.text_area("Objetivo", value=planejar.get('objetivo', ''))
+        
+        # Tópicos
+        old_topicos = planejar.get('topicos', [])
+        cur_topicos = []
+        for i in range(10):
+            val = old_topicos[i] if i < len(old_topicos) else ""
+            t_input = st.text_input(f"Tópico {i+1}", value=val, key=f"et_{i}")
+            if t_input: cur_topicos.append(t_input)
+            
+        if st.form_submit_button("SALVAR TODAS AS ALTERAÇÕES", type="primary"):
+            novos_dados = {
+                "titulo": new_title,
+                "responsavel": new_resp,
+                "classificacao": new_cl,
+                "prazo": new_prazo.strftime("%Y-%m-%d"),
+                "planejar": {
+                    "descricao": new_desc,
+                    "objetivo": new_obj,
+                    "topicos": cur_topicos
+                },
+                "atualizado_em": datetime.now().isoformat()
+            }
+            if atualizar_pdca(p['id'], novos_dados):
+                st.success("PDCAs atualizado com sucesso!")
+                st.session_state.pagina = "lista_pdcas"; st.rerun()
+            else:
+                st.error("Erro ao salvar no banco de dados.")
 
-# 12. PÁGINA: ADMIN
 def pagina_admin():
-    renderizar_header("Administração", "CONTROLE DE ACESSO E DADOS")
-    t1, t2, t3, t4 = st.tabs(["Usuários", "Novo Usuário", "Meus Dados", "Migração"])
+    renderizar_header("Administração", "CONTROLE DE ACESSOS E DADOS")
+    t1, t2, t3, t4 = st.tabs(["👥 Usuários", "➕ Novo Usuário", "🔑 Meus Dados", "🛠️ Migração"])
     
     with t1:
         for u in auth.listar_usuarios():
-            st.write(f"**{u['nome']}** (@{u['username']}) - {u['papel']}")
+            st.write(f"**{u['nome']}** (`{u['username']}`) - {u['papel']}")
             st.divider()
     with t2:
-        with st.form("add_u"):
-            n = st.text_input("Nome"); u = st.text_input("Login"); p = st.text_input("Senha", type="password")
-            if st.form_submit_button("CRIAR"):
-                auth.adicionar_usuario(n, u, p, "operador")
-                st.success("Criado!")
+        with st.form("add_u_adm"):
+            n = st.text_input("Nome"); u = st.text_input("User"); p = st.text_input("Senha", type="password")
+            if st.form_submit_button("CADASTRAR"):
+                if auth.adicionar_usuario(u, p, n, "operador"): st.success("OK!"); st.rerun()
     with t3:
-        st.write("Ajuste suas credenciais de login.")
-        # Form de ajuste de dados...
+        with st.form("my_data"):
+            st.write("Alterar Senha")
+            if st.form_submit_button("ATUALIZAR"): st.info("Funcionalidade em desenvolvimento")
     with t4:
-        st.warning("⚠️ Importar dados dos arquivos JSON antigos para a nuvem.")
-        if st.button("INICIAR MIGRAÇÃO"):
-            st.info("Processando...")
+        st.warning("Importar do JSON antigo para o Banco.")
+        if st.button("EXECUTAR MIGRAÇÃO"):
+            st.info("Iniciando...")
 
-# 13. ROUTING
+# 14. INICIALIZAÇÃO E ROUTING
 if "usuario_logado" not in st.session_state: st.session_state.usuario_logado = None
 if "pagina" not in st.session_state: st.session_state.pagina = "dashboard"
 
 if not st.session_state.usuario_logado:
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    c1, m, c3 = st.columns([1, 1, 1])
+    c1, m, c3 = st.columns([1, 1.2, 1])
     with m:
-        st.markdown("<div style='text-align:center; padding:20px; background:white; border-radius:10px; border:1px solid #DDD;'><h2>UNILUX</h2><p style='color:#666;letter-spacing:1px;font-size:0.8rem;'>INDUSTRIAL ACCESS</p></div>", unsafe_allow_html=True)
-        with st.form("login_app"):
-            user_in = st.text_input("Usuário")
-            pass_in = st.text_input("Senha", type="password")
+        st.markdown("<div style='text-align:center; padding:20px; background:white; border-radius:10px; border:1px solid #DDD; margin-top:50px;'><h2>UNILUX</h2><p style='color:#666;letter-spacing:1px;font-size:0.8rem;'>INDUSTRIAL ACCESS</p></div>", unsafe_allow_html=True)
+        with st.form("login_main"):
+            ui = st.text_input("Usuário"); pi = st.text_input("Senha", type="password")
             if st.form_submit_button("ENTRAR", use_container_width=True, type="primary"):
-                user = auth.autenticar(user_in, pass_in)
+                user = auth.autenticar(ui, pi)
                 if user: st.session_state.usuario_logado = user; st.rerun()
-                else: st.error("Acesso Negado")
+                else: st.error("Incorreto")
     st.stop()
 
 renderizar_sidebar()
-
-# MAPA DE NAVEGAÇÃO
-paginas = {
-    "dashboard": pagina_dashboard,
-    "novo_pdca": pagina_novo_pdca,
-    "lista_pdcas": pagina_lista_pdcas,
-    "realizar_pdca": pagina_realizar_pdca,
-    "visualizar_pdca": pagina_visualizar_pdca,
-    "editar_pdca": pagina_editar_pdca,
-    "admin": pagina_admin
+navegacao = {
+    "dashboard": pagina_dashboard, "novo_pdca": pagina_novo_pdca, "lista_pdcas": pagina_lista_pdcas,
+    "realizar_pdca": pagina_realizar_pdca, "visualizar_pdca": pagina_visualizar_pdca,
+    "editar_pdca": pagina_editar_pdca, "admin": pagina_admin
 }
-
-if st.session_state.pagina in paginas:
-    paginas[st.session_state.pagina]()
-
+if st.session_state.pagina in navegacao: navegacao[st.session_state.pagina]()
 st.markdown("<div style='text-align:center; padding:50px; color:#AAA; font-size:0.75rem;'>UNILUX INDUSTRIAL MANAGEMENT SYSTEM | 2024</div>", unsafe_allow_html=True)
