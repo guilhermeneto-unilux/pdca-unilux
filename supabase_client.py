@@ -15,24 +15,24 @@ except ImportError:
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
-# Em produção no Streamlit Cloud, sobrescreve com st.secrets
-if not SUPABASE_URL or not SUPABASE_KEY:
-    try:
-        import streamlit as st
-        SUPABASE_URL = st.secrets["supabase"]["url"]
-        SUPABASE_KEY = st.secrets["supabase"]["key"]
-    except Exception:
-        pass
-
+# Em produção no Streamlit Cloud, pegaremos do st.secrets dentro da função para evitar erros de importação
 from supabase import create_client, Client
 
 _client: Client = None
 
-
 def get_client() -> Client:
     global _client
     if _client is None:
-        if not SUPABASE_URL or not SUPABASE_KEY:
-            raise RuntimeError("Credenciais do Supabase não configuradas. Verifique o arquivo .env ou st.secrets.")
-        _client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        url = SUPABASE_URL
+        key = SUPABASE_KEY
+        
+        if not url or not key:
+            try:
+                import streamlit as st
+                url = st.secrets["supabase"]["url"]
+                key = st.secrets["supabase"]["key"]
+            except Exception as e:
+                raise RuntimeError(f"Credenciais do Supabase não encontradas. Verifique o st.secrets (erro base: {e})")
+                
+        _client = create_client(url, key)
     return _client
