@@ -1555,8 +1555,21 @@ def pagina_admin():
     st.markdown("### ⚙️ Administração de Usuários")
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
     
-    t_add, t_list, t_me = st.tabs(["👥 Lista de Usuários", "➕ Adicionar Usuário", "🔑 Meus Dados"])
+    t_add, t_list, t_me, t_mig = st.tabs(["👥 Lista de Usuários", "➕ Adicionar Usuário", "🔑 Meus Dados", "🛠️ Migração de Dados"])
     
+    with t_mig:
+        st.markdown("#### Recuperar dados antigos (JSON)")
+        st.warning("Use esta função para importar seus PDCAs antigos que ficaram presos nos arquivos JSON da versão antiga para a nova nuvem do Supabase.")
+        if st.button("🚀 Iniciar Migração para o Banco de Dados", type="primary"):
+            with st.spinner("Copiando PDCAs para a nuvem... aguarde."):
+                try:
+                    import migrar_para_supabase
+                    migrar_para_supabase.migrar()
+                    st.success("✅ Migração concluída com sucesso! Recarregue a página (ou clique em Dashboard) para ver seus PDCAs.")
+                    st.balloons()
+                except Exception as e:
+                    st.error(f"Erro durante a migração: {e}")
+                    
     with t_me:
         st.markdown("#### Alterar as minhas credenciais")
         p_nome = st.session_state.usuario_logado.get("nome", "")
