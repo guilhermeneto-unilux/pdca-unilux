@@ -382,15 +382,22 @@ def pagina_realizar_pdca():
     if c1.button("✅ FINALIZAR PDCA", type="primary", use_container_width=True):
         if check:
             all_conforme = all(r["status"] == "Conforme" for r in respostas.values())
-            registrar_realizacao(p['id'], {"observacoes": final_obs, "detalhes_topicos": respostas, "conforme": all_conforme}, True)
-            st.success("PDCA Concluído!")
-            st.session_state.pagina = "lista_pdcas"; st.rerun()
-        else: st.warning("É necessário confirmar o checklist.")
+            # CORREÇÃO: Passando os argumentos na ordem correta da função no data_manager.py
+            # registrar_realizacao(id, comentarios_topicos, observacao_geral, tudo_ok)
+            registrar_realizacao(p['id'], respostas, final_obs, True)
+            st.success("PDCA Concluído com sucesso!")
+            st.balloons()
+            st.session_state.pagina = "lista_pdcas"
+            st.rerun()
+        else: 
+            st.warning("É necessário confirmar o checklist marcando a caixa acima.")
         
     if c2.button("🟠 REABRIR (NOVO CICLO)", use_container_width=True):
-        registrar_realizacao(p['id'], {"observacoes": final_obs, "detalhes_topicos": respostas, "conforme": False}, False)
-        st.warning("Ciclo reiniciado para ajuste.")
-        st.session_state.pagina = "lista_pdcas"; st.rerun()
+        # CORREÇÃO: Mesmo ajuste de argumentos aqui
+        registrar_realizacao(p['id'], respostas, final_obs, False)
+        st.warning("Ciclo registrado com pendências. PDCA reagendado para revisão.")
+        st.session_state.pagina = "lista_pdcas"
+        st.rerun()
 
 def pagina_visualizar_pdca():
     p = st.session_state.pdca_selecionado
