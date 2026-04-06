@@ -368,11 +368,13 @@ def pagina_realizar_pdca():
     else:
         for i, t in enumerate(topicos):
             st.markdown(f"**Tópico {i+1}: {t}**")
-            c_st, c_obs = st.columns([1, 2])
-            status = c_st.radio("Status", ["Conforme", "Não Conforme"], key=f"chk_st_{i}", horizontal=True, label_visibility="collapsed")
-            comment = c_obs.text_input("Observação / Justificativa", key=f"chk_obs_{i}", placeholder="Se houver desvio, detalhe aqui...")
+            c_st, c_obs = st.columns([1, 3]) # Aumentei o espaço para a observação
+            with c_st:
+                status = st.radio("Status", ["Conforme", "Não Conforme"], key=f"chk_st_{i}", horizontal=True, label_visibility="collapsed")
+            with c_obs:
+                comment = st.text_area("Observação / Justificativa", key=f"chk_obs_{i}", placeholder="Se houver desvio, detalhe aqui...", height=80, label_visibility="collapsed")
             respostas[t] = {"status": status, "obs": comment}
-            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("<div style='height:15px; border-bottom:1px solid #eee; margin-bottom:15px;'></div>", unsafe_allow_html=True)
             
     final_obs = st.text_area("Observações Gerais da Execução")
     check = st.checkbox("Declaro que todos os itens foram conferidos conforme o padrão.")
