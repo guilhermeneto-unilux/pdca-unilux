@@ -166,7 +166,7 @@ def finalizar_ciclo(pdca_id, percentual, nova_data=None):
     return pdca
 
 
-def registrar_realizacao(pdca_id, comentarios_topicos, observacao_geral, tudo_ok, nova_data=None, anexo=None):
+def registrar_realizacao(pdca_id, detalhes_topicos, observacao_geral, tudo_ok, usuario="N/A", nova_data=None, anexo=None):
     """Registra uma realização/execução de um PDCA."""
     pdca = obter_pdca(pdca_id)
     if not pdca:
@@ -175,7 +175,8 @@ def registrar_realizacao(pdca_id, comentarios_topicos, observacao_geral, tudo_ok
     registro = {
         "data": datetime.now().isoformat(),
         "tipo": "realizacao",
-        "comentarios_topicos": comentarios_topicos,
+        "usuario": usuario, # Salvando quem realizou
+        "detalhes_topicos": detalhes_topicos, # Alinhado com app.py
         "observacao_geral": observacao_geral,
         "resultado": "OK" if tudo_ok else "Necessita Revisão",
         "anexo": anexo,

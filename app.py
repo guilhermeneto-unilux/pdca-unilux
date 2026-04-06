@@ -384,9 +384,8 @@ def pagina_realizar_pdca():
     if c1.button("✅ FINALIZAR PDCA", type="primary", use_container_width=True):
         if check:
             all_conforme = all(r["status"] == "Conforme" for r in respostas.values())
-            # CORREÇÃO: Passando os argumentos na ordem correta da função no data_manager.py
-            # registrar_realizacao(id, comentarios_topicos, observacao_geral, tudo_ok)
-            registrar_realizacao(p['id'], respostas, final_obs, True)
+            # Passando agora o usuário logado no 5º argumento
+            registrar_realizacao(p['id'], respostas, final_obs, True, st.session_state.usuario_logado['nome'])
             st.success("PDCA Concluído com sucesso!")
             st.balloons()
             st.session_state.pagina = "lista_pdcas"
@@ -395,8 +394,8 @@ def pagina_realizar_pdca():
             st.warning("É necessário confirmar o checklist marcando a caixa acima.")
         
     if c2.button("🟠 REABRIR (NOVO CICLO)", use_container_width=True):
-        # CORREÇÃO: Mesmo ajuste de argumentos aqui
-        registrar_realizacao(p['id'], respostas, final_obs, False)
+        # Passando agora o usuário logado no 5º argumento
+        registrar_realizacao(p['id'], respostas, final_obs, False, st.session_state.usuario_logado['nome'])
         st.warning("Ciclo registrado com pendências. PDCA reagendado para revisão.")
         st.session_state.pagina = "lista_pdcas"
         st.rerun()
@@ -430,13 +429,16 @@ def pagina_visualizar_pdca():
         hist = p.get('historico', [])
         if not hist: st.caption("Nenhum ciclo registrado no histórico.")
         for h in reversed(hist):
-            with st.expander(f"Ciclo em {formatar_data(h['data'])} - Por {h.get('usuario', 'N/A')}"):
-                st.write(f"**Obs Gerais:** {h.get('observacoes', 'OK')}")
-                if "detalhes_topicos" in h:
+            usuario_h = h.get('usuario') or h.get('responsavel') or 'N/A'
+            with st.expander(f"Ciclo em {formatar_data(h['data'])} - Por {usuario_h}"):
+                st.write(f"**Obs Gerais:** {h.get('observacao_geral') or h.get('observacoes') or 'OK'}")
+                # Compatibilidade com nomes de campos antigos e novos
+                detalhes = h.get('detalhes_topicos') or h.get('comentarios_topicos')
+                if detalhes:
                     st.write("**Detalhamento por item:**")
-                    for t, res in h["detalhes_topicos"].items():
-                        icon = "✅" if res["status"] == "Conforme" else "❌"
-                        st.write(f"{icon} **{t}**: {res['obs']}")
+                    for t, res in detalhes.items():
+                        icon = "✅" if res.get("status") == "Conforme" else "❌"
+                        st.write(f"{icon} **{t}**: {res.get('obs', 'S/C')}")
 
 def pagina_editar_pdca():
     p = st.session_state.pdca_selecionado
