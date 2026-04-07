@@ -204,6 +204,19 @@ def registrar_realizacao(pdca_id, detalhes_topicos, observacao_geral, tudo_ok, u
 
     get_client().table("pdcas").update(payload).eq("id", pdca_id).execute()
     pdca.update(payload)
+
+    # Disparo automático de e-mail para o gerente
+    try:
+        from notificacoes import enviar_notificacao_realizacao_gerente
+        enviar_notificacao_realizacao_gerente(
+            pdca, 
+            observacao_geral, 
+            "✅ OK" if tudo_ok else "🟠 Necessita Revisão", 
+            usuario
+        )
+    except Exception as e:
+        print(f"Erro ao disparar notificação: {e}")
+
     return pdca
 
 

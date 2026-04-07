@@ -114,20 +114,24 @@ def enviar_resumo_finalizacao(pdca, percentual):
     return {"sucesso": enviado, "mensagem": str_msg, "tipo": "resumo_finalizacao"}
 
 
-def enviar_notificacao_realizacao_gerente(pdca):
+def enviar_notificacao_realizacao_gerente(pdca, observacao_geral, resultado, usuario):
     email_gerente = pdca.get("email_gerente", "")
     titulo = pdca.get("titulo", "Sem título")
-    responsavel = pdca.get("responsavel", "N/A")
 
     if not email_gerente:
         return {"sucesso": False, "mensagem": f"PDCA '{titulo}' não possui email do gerente cadastrado."}
 
-    assunto = f"Notificação — Ciclo PDCA '{titulo}' Realizado"
+    assunto = f"Aviso de Finalização/Ciclo — PDCA '{titulo}'"
     corpo = (
         f"Olá,\n\n"
-        f"O responsável {responsavel} acaba de realizar uma etapa de avaliação "
-        f"no ciclo PDCA '{titulo}'.\n\n"
-        f"Acesse o sistema para visualizar os comentários atualizados.\n\n"
+        f"Informamos que o PDCA '{titulo}' acaba de ter um ciclo registrado.\n\n"
+        f"Detalhes da Execução:\n"
+        f"{'=' * 30}\n"
+        f"Responsável: {usuario}\n"
+        f"Resultado: {resultado}\n"
+        f"Observações: {observacao_geral}\n"
+        f"{'=' * 30}\n\n"
+        f"Por favor, acesse o sistema para revisar o detalhamento de cada tópico.\n\n"
         f"Enviado pelo Sistema PDCA em: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
     )
 
