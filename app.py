@@ -276,6 +276,38 @@ def pagina_dashboard():
         for p in proximos:
             st.markdown(f'<div class="alerta-box">⚠️ <b>{p["titulo"]}</b> ({p["responsavel"]}) - Vence em: {formatar_data(p["prazo"])}</div>', unsafe_allow_html=True)
 
+    st.divider()
+    st.markdown("### 🔍 Detalhamento por Categoria")
+    
+    cat1, cat2, cat3 = st.columns(3)
+    
+    with cat1:
+        with st.expander("🚨 Sobrevivência"):
+            it = [p for p in todos if p["classificacao"] == "Sobrevivência"]
+            for p in it:
+                if st.button(f"📄 {p['titulo']}", key=f"dash_s_{p['id']}", use_container_width=True):
+                    st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
+                    
+    with cat2:
+        with st.expander("📈 Expansão"):
+            it = [p for p in todos if p["classificacao"] == "Expansão"]
+            for p in it:
+                if st.button(f"📄 {p['titulo']}", key=f"dash_e_{p['id']}", use_container_width=True):
+                    st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
+
+    with cat3:
+        with st.expander("🛡️ Autonomia"):
+            it = [p for p in todos if p["classificacao"] == "Autonomia"]
+            for p in it:
+                if st.button(f"📄 {p['titulo']}", key=f"dash_a_{p['id']}", use_container_width=True):
+                    st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
+
+    if atrasados:
+        with st.expander("⚠️ Ver Lista de Atrasados"):
+            for p in atrasados:
+                if st.button(f"🚩 {p['titulo']} (Resp: {p['responsavel']})", key=f"dash_atr_{p['id']}", use_container_width=True):
+                    st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
+
 def pagina_novo_pdca():
     renderizar_header("Planejamento", "NOVO CICLO PDCA")
     
@@ -319,37 +351,78 @@ def pagina_lista_pdcas():
     renderizar_header("Repositório", "LISTA DE PDCAS")
     todos = listar_pdcas()
     
-    busca = st.text_input("🔍 Buscar por título...")
+    # Controles de Visualização
+    c1, c2, c3 = st.columns([2, 2, 2])
+    with c1:
+        busca = st.text_input("🔍 Buscar por título...")
+    with c2:
+        tipo_view = st.radio("Visualização", ["📋 Lista", "🗂️ Kanban"], horizontal=True, label_visibility="collapsed")
+    
     filtrados = [p for p in todos if not busca or busca.lower() in p['titulo'].lower()]
 
-    for p in filtrados:
-        st.markdown(f"""
-        <div class="pdca-row-container" style='border-bottom:none; border-radius:8px 8px 0 0;'>
-            <div style='display:flex; justify-content: space-between;'>
-                <span style='font-size:1.1rem; font-weight:700;'>{p['titulo']}</span>
-                <div>{b_status(p['status'])}</div>
+    if tipo_view == "📋 Lista":
+        for p in filtrados:
+            st.markdown(f"""
+            <div class="pdca-row-container" style='border-bottom:none; border-radius:8px 8px 0 0; margin-top:15px;'>
+                <div style='display:flex; justify-content: space-between;'>
+                    <span style='font-size:1.1rem; font-weight:700;'>{p['titulo']}</span>
+                    <div>{b_status(p['status'])}</div>
+                </div>
+                <div style='font-size:0.85rem; color:#666;'>
+                    Resp: {p['responsavel']} | Prazo: {formatar_data(p['prazo'])} | {p['classificacao']}
+                </div>
             </div>
-            <div style='font-size:0.85rem; color:#666;'>
-                Resp: {p['responsavel']} | Prazo: {formatar_data(p['prazo'])} | {p['classificacao']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+            
+            with st.container():
+                st.markdown("<div class='actions-bar'>", unsafe_allow_html=True)
+                cols = st.columns([1,1,1,1,4])
+                if cols[0].button("🔄 Realizar", key=f"re_{p['id']}"):
+                    st.session_state.pdca_selecionado = p; st.session_state.pagina = "realizar_pdca"; st.rerun()
+                if cols[1].button("👁️ Ver", key=f"vi_{p['id']}"):
+                    st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
+                if cols[2].button("📝 Editar", key=f"ed_{p['id']}"):
+                    st.session_state.pdca_selecionado = p; st.session_state.pagina = "editar_pdca"; st.rerun()
+                if cols[3].button("🗑️ Excluir", key=f"ex_{p['id']}"):
+                    if st.session_state.get('confirm_del') == p['id']:
+                        remover_pdca(p['id']); st.rerun()
+                    else:
+                        st.session_state.confirm_del = p['id']; st.warning("Confirmar?")
+                st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        # Kanban View
+        agrupar = st.selectbox("Agrupar por", ["Status", "Classificação", "Responsável"])
+        map_key = {"Status": "status", "Classificação": "classificacao", "Responsável": "responsavel"}
+        key = map_key[agrupar]
         
-        with st.container():
-            st.markdown("<div class='actions-bar'>", unsafe_allow_html=True)
-            cols = st.columns([1,1,1,1,4])
-            if cols[0].button("🔄 Realizar", key=f"re_{p['id']}"):
-                st.session_state.pdca_selecionado = p; st.session_state.pagina = "realizar_pdca"; st.rerun()
-            if cols[1].button("👁️ Ver", key=f"vi_{p['id']}"):
-                st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
-            if cols[2].button("📝 Editar", key=f"ed_{p['id']}"):
-                st.session_state.pdca_selecionado = p; st.session_state.pagina = "editar_pdca"; st.rerun()
-            if cols[3].button("🗑️ Excluir", key=f"ex_{p['id']}"):
-                if st.session_state.get('confirm_del') == p['id']:
-                    remover_pdca(p['id']); st.rerun()
-                else:
-                    st.session_state.confirm_del = p['id']; st.warning("Confirmar?")
-            st.markdown("</div>", unsafe_allow_html=True)
+        # Obter colunas únicas ordenadas
+        colunas_nomes = sorted(list(set([p[key] for p in filtrados])))
+        if not colunas_nomes and key == "status": colunas_nomes = ["Em Andamento", "Concluído"]
+        
+        cols_st = st.columns(len(colunas_nomes) if colunas_nomes else 1)
+        
+        for idx, col_nome in enumerate(colunas_nomes):
+            with cols_st[idx]:
+                st.markdown(f"#### {col_nome}")
+                itens = [p for p in filtrados if p[key] == col_nome]
+                if not itens: st.caption("Vazio")
+                for p in itens:
+                    with st.container():
+                        st.markdown(f"""
+                        <div style='background:white; padding:12px; border:1px solid #EEE; border-radius:8px; margin-bottom:10px; border-left:4px solid #333;'>
+                            <div style='font-weight:700; font-size:0.9rem; margin-bottom:5px;'>{p['titulo']}</div>
+                            <div style='font-size:0.75rem; color:#666;'>{p['responsavel']} | {formatar_data(p['prazo'])}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        # Ações compactas para Kanban
+                        c_k1, c_k2, c_k3 = st.columns(3)
+                        if c_k1.button("🔄", key=f"kre_{p['id']}", help="Realizar"):
+                            st.session_state.pdca_selecionado = p; st.session_state.pagina = "realizar_pdca"; st.rerun()
+                        if c_k2.button("👁️", key=f"kvi_{p['id']}", help="Ver"):
+                            st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
+                        if c_k3.button("📝", key=f"ked_{p['id']}", help="Editar"):
+                            st.session_state.pdca_selecionado = p; st.session_state.pagina = "editar_pdca"; st.rerun()
 
 def pagina_realizar_pdca():
     p = st.session_state.pdca_selecionado
