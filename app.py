@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime, timedelta
 import os
-import auth
+import auth_manager as auth
 
 # 1. CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(
@@ -16,12 +16,13 @@ from data_manager import (
     carregar_dados, criar_pdca, obter_pdca, listar_pdcas,
     atualizar_pdca, remover_pdca, finalizar_ciclo, reabrir_pdca,
     obter_historico, obter_pdcas_proximos_prazo, exportar_csv,
-    registrar_realizacao
+    registrar_realizacao, importar_de_excel
 )
 from notificacoes import (
     enviar_lembrete_prazo, enviar_resumo_finalizacao,
     verificar_notificacoes, enviar_notificacao_realizacao_gerente
 )
+from migrar_para_supabase import migrar
 
 # 3. SISTEMA DE DESIGN INDUSTRIAL (CSS)
 st.markdown("""
@@ -561,30 +562,95 @@ def pagina_editar_pdca():
 
 def pagina_admin():
     renderizar_header("Administração", "CONTROLE E DADOS")
-    t1, t2, t3, t4 = st.tabs(["👥 Usuários", "➕ Novo Usuário", "🔑 Meus Dados", "🛠️ Migração"])
+    t1, t2, t3, t4, t5 = st.tabs(["👥 Usuários", "➕ Novo Usuário", "📄 Importar Excel", "🔑 Meus Dados", "🛠️ Migração"])
     
     with t1:
+        # Debugging the AttributeError
+        if "debug_mode" not in st.session_state:
+            st.session_state.debug_mode = False
+        
+        if st.checkbox("Mostrar Debug Admin", value=False):
+            st.write(f"DEBUG: auth type is {type(auth)}")
+            st.write(f"DEBUG: auth has listar_usuarios? {hasattr(auth, 'listar_usuarios')}")
+            st.write(f"DEBUG: auth dir: {dir(auth)}")
+
         for u in auth.listar_usuarios():
-            st.write(f"👤 **{u['nome']}** (`{u['username']}`) - {u['papel']}")
+            c1, c2, c3 = st.columns([6, 2, 2])
+            c1.write(f"👤 **{u['nome']}** (`{u['username']}`) - {u['papel']}")
+            if c2.button("✏️", key=f"edit_u_{u['username']}"):
+                st.session_state.edit_user = u
+            if c3.button("🗑️", key=f"del_u_{u['username']}"):
+                if u['username'] != "admin": # Proteção contra deletar o admin principal
+                    auth.remover_usuario(u['username'])
+                    st.success("Removido!")
+                    st.rerun()
+                else: st.error("Não se pode remover o admin.")
+            
+            if st.session_state.get("edit_user") and st.session_state.edit_user['username'] == u['username']:
+                with st.form(f"f_edit_{u['username']}"):
+                    new_n = st.text_input("Nome", value=u['nome'])
+                    new_p = st.text_input("Nova Senha (deixe em branco se não quiser mudar)", type="password")
+                    new_role = st.selectbox("Papel", ["admin", "operador"], index=0 if u['papel']=="admin" else 1)
+                    if st.form_submit_button("ATUALIZAR"):
+                        auth.atualizar_usuario(u['username'], u['username'], new_p, new_n, new_role)
+                        st.session_state.edit_user = None
+                        st.success("Atualizado!")
+                        st.rerun()
             st.divider()
+
     with t2:
-        with st.form("add_u_adm"):
-            n = st.text_input("Nome"); u = st.text_input("User"); p = st.text_input("Senha", type="password")
-            if st.form_submit_button("CADASTRAR"):
-                if auth.adicionar_usuario(u, p, n, "operador"): st.success("OK!"); st.rerun()
+        with st.form("add_u_adm", clear_on_submit=True):
+            n = st.text_input("Nome Completos")
+            u = st.text_input("Usuário (login)").lower().strip()
+            p = st.text_input("Senha", type="password")
+            role = st.selectbox("Papel", ["admin", "operador"])
+            if st.form_submit_button("CADASTRAR USUÁRIO"):
+                if n and u and p:
+                    sucesso, msg = auth.adicionar_usuario(u, p, n, role)
+                    if sucesso:
+                        st.success(msg); st.rerun()
+                    else: st.error(msg)
+                else:
+                    st.error("Preencha todos os campos.")
+                
     with t3:
+        st.markdown("#### Importação de Excel")
+        st.write("Efetue o upload da planilha com as colunas: 'Nome do PDCA', 'Responsável', 'Descrição', 'Prazo'.")
+        uploaded_file = st.file_uploader("Selecione o arquivo .xlsx", type=["xlsx"])
+        if uploaded_file and st.button("PROCESSAR ARQUIVO"):
+            sucesso, msg = importar_de_excel(uploaded_file)
+            if sucesso: st.success(msg)
+            else: st.error(msg)
+            
+    with t4:
         st.write("Alterar dados do seu perfil.")
         with st.form("me_data"):
             me_n = st.text_input("Nome", value=st.session_state.usuario_logado['nome'])
-            if st.form_submit_button("SALVAR"): st.success("Atualizado (Em Breve)")
-    with t4:
-        st.warning("Importar do JSON antigo para o Banco de Dados.")
-        if st.button("EXECUTAR MIGRAÇÃO (JSON -> CLOUD)"):
-            st.info("Iniciando processo...")
+            me_p = st.text_input("Nova Senha", type="password", placeholder="Deixe em branco para manter a atual")
+            if st.form_submit_button("SALVAR ALTERAÇÕES"):
+                auth.atualizar_usuario(
+                    st.session_state.usuario_logado['username'], 
+                    st.session_state.usuario_logado['username'], 
+                    me_p, me_n, None
+                )
+                st.session_state.usuario_logado['nome'] = me_n
+                st.success("Dados atualizados com sucesso!")
+                
+    with t5:
+        st.warning("Importar do JSON antigo para o Banco de Dados Cloud.")
+        st.write("Esta ação irá carregar os dados de 'pdcas.json' e 'usuarios.json' para as tabelas do Supabase.")
+        if st.button("EXECUTAR AGORA (JSON -> SUPABASE)"):
+            try:
+                migrar()
+                st.success("Migração concluída com sucesso!")
+            except Exception as e:
+                st.error(f"Erro na migração: {e}")
 
 # 15. MAIN APP ENTRY
 if "usuario_logado" not in st.session_state: st.session_state.usuario_logado = None
 if "pagina" not in st.session_state: st.session_state.pagina = "dashboard"
+if "edit_user" not in st.session_state: st.session_state.edit_user = None
+if "confirm_del" not in st.session_state: st.session_state.confirm_del = None
 
 if not st.session_state.usuario_logado:
     st.markdown("<br><br>", unsafe_allow_html=True)

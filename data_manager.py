@@ -40,7 +40,12 @@ def _pdca_padrao():
 
 
 def _row_to_pdca(row):
-    """Converte uma linha do Supabase para o formato dict do sistema."""
+    """Converte uma linha do Supabase para o formato dict do sistema, garantindo campos obrigatórios."""
+    row["titulo"] = row.get("titulo") or "Projeto Sem Título"
+    row["status"] = row.get("status") or "Em Andamento"
+    row["classificacao"] = row.get("classificacao") or "Expansão"
+    row["responsavel"] = row.get("responsavel") or "N/A"
+    
     if row.get("planejar") is None:
         row["planejar"] = {}
     if row.get("historico") is None:
@@ -288,3 +293,46 @@ def exportar_csv(pdca_id=None):
         linhas.append(",".join(_escapar(c) for c in campos))
 
     return cabecalho + "\n".join(linhas)
+
+
+def importar_de_excel(arquivo_bytes):
+    """
+    Importa PDCAs de um arquivo Excel (buffer de bytes do Streamlit).
+    Retorna (sucesso, mensagem).
+    """
+    try:
+        import pandas as pd
+        df = pd.read_excel(arquivo_bytes)
+        contador = 0
+        for _, row in df.iterrows():
+            row_dict = {str(k).strip(): v for k, v in row.items()}
+            nome = str(row_dict.get("Nome do PDCA", row_dict.get("Nome", ""))).strip()
+            if not nome or nome == "nan": continue
+            
+            descricao = str(row_dict.get("Descrição", "")).strip()
+            responsavel = str(row_dict.get("Responsável", row_dict.get("Responsavel", ""))).strip()
+            prazo_raw = row_dict.get("Prazo")
+            
+            prazo = datetime.now().strftime("%Y-%m-%d")
+            if pd.notnull(prazo_raw):
+                if hasattr(prazo_raw, "strftime"): prazo = prazo_raw.strftime("%Y-%m-%d")
+                else:
+                    try: prazo = datetime.strptime(str(prazo_raw).split()[0], "%Y-%m-%d").strftime("%Y-%m-%d")
+                    except: pass
+            
+            criar_pdca({
+                "titulo": nome if nome != "nan" else "PDCA Importado",
+                "classificacao": "Expansão",
+                "responsavel": responsavel if responsavel and responsavel != "nan" else "N/A",
+                "prazo": prazo,
+                "planejar": {
+                    "descricao": descricao if descricao and descricao != "nan" else "Sem descrição.",
+                    "objetivo": "Importado via Excel",
+                    "topicos": ["Avaliação inicial do projeto"]
+                }
+            })
+            contador += 1
+        return True, f"Sucesso! {contador} PDCAs importados."
+    except Exception as e:
+        return False, f"Erro na importação: {e}"
+

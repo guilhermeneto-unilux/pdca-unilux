@@ -3,3 +3,4 @@ pandas
 openpyxl
 supabase==2.10.0
 python-dotenv
+requests
