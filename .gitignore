@@ -13,8 +13,9 @@ __pycache__/
 .DS_Store
 
 # Scripts de uso único (migração e importação)
-migrar_para_supabase.py
-importar_excel.py
+# Removidos do ignore pois são importados no app.py
+# migrar_para_supabase.py
+# importar_excel.py
 criar_tabelas.sql
 teste_importacao.xlsx
 
