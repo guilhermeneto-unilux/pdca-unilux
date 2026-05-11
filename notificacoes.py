@@ -20,12 +20,23 @@ except ImportError:
 def _enviar_email_real(destinatario, assunto, corpo):
     """
     Função interna para envio de email via SMTP.
-    Requer parâmetros no .env: SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD.
+    Tenta pegar do .env (local) ou do st.secrets (Streamlit Cloud).
     """
-    servidor = os.getenv("SMTP_SERVER", "")
+    servidor = os.getenv("SMTP_SERVER")
     porta = os.getenv("SMTP_PORT", "587")
-    usuario = os.getenv("SMTP_USER", "")
-    senha = os.getenv("SMTP_PASSWORD", "")
+    usuario = os.getenv("SMTP_USER")
+    senha = os.getenv("SMTP_PASSWORD")
+
+    # Fallback para st.secrets (Streamlit Cloud)
+    if not servidor or not usuario or not senha:
+        try:
+            import streamlit as st
+            servidor = st.secrets["email"]["smtp_server"]
+            porta = st.secrets["email"].get("smtp_port", "587")
+            usuario = st.secrets["email"]["smtp_user"]
+            senha = st.secrets["email"]["smtp_password"]
+        except Exception:
+            pass
 
     # Se as configurações não existirem ou ainda forem os placeholders do .env original
     if not servidor or not usuario or not senha or "sua_senha_" in senha or "seu_email" in usuario:
