@@ -39,7 +39,7 @@ st.markdown("""
         --text-main: #141620;
         --text-muted: #667085;
         
-        --red: #d92632;
+        --red: #be123c;
         --red-soft: #fff1f2;
         --green: #079362;
         --green-soft: #edfdf6;
@@ -52,154 +52,96 @@ st.markdown("""
         --font-body: Aptos, "Segoe UI", -apple-system, sans-serif;
     }
 
+    /* Base Typography & Background */
     html, body, [class*="css"], .stMarkdown {
         font-family: var(--font-body) !important;
         color: var(--text-main);
     }
+    .stApp { background-color: var(--bg-color) !important; }
 
-    .stApp {
-        background-color: var(--bg-color);
-    }
+    /* Hide default Streamlit clutter */
+    header[data-testid="stHeader"] { display: none !important; }
+    footer[data-testid="stFooter"] { display: none !important; }
+    [data-testid="stSidebarNav"] { display: none !important; }
+    .stApp > header { background-color: transparent !important; }
+    .block-container { padding-top: 32px !important; padding-bottom: 32px !important; max-width: 1200px !important; }
 
-    /* Ocultar apenas a navegação de páginas nativa */
-    [data-testid="stSidebarNav"] { display: none; }
-    
-    /* Garantir que o botão de abrir/fechar a barra lateral apareça */
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {
-        background-color: var(--sidebar-bg);
-        border-right: 1px solid var(--border-color);
+        background-color: var(--sidebar-bg) !important;
+        border-right: 1px solid var(--border-color) !important;
     }
-    
-    .sidebar-header {
-        padding: 20px 0;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 20px;
-    }
+    .sidebar-header { padding: 20px 0; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
+    .brand-title { font-family: var(--font-title); font-weight: 800; font-size: 1.5rem; color: var(--text-main); margin: 0; letter-spacing: -1px; }
+    .brand-subtitle { font-family: var(--font-title); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
 
-    .brand-title {
-        font-family: var(--font-title);
-        font-weight: 800;
-        font-size: 1.5rem;
-        color: var(--text-main);
-        margin: 0;
-        letter-spacing: -1px;
-    }
-
-    .brand-subtitle {
-        font-family: var(--font-title);
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    .metric-box {
+    /* Forms */
+    [data-testid="stForm"] {
         background: var(--card-bg);
         border: 1px solid var(--border-color);
-        padding: 18px 20px;
-        border-radius: 10px;
-        min-height: 112px;
-        margin-bottom: 10px;
+        border-radius: 12px;
+        padding: 24px;
         box-shadow: 0 4px 12px rgba(21, 22, 32, 0.02);
     }
 
-    .metric-label {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        font-weight: 600;
+    /* Inputs (Text, Select, Textarea) */
+    .stTextInput > div > div > input, 
+    .stSelectbox > div > div > div, 
+    .stTextArea > div > div > textarea,
+    .stDateInput > div > div > input {
+        background: #fff !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 9px !important;
+        min-height: 46px !important;
+        color: var(--text-main) !important;
+        box-shadow: none !important;
+    }
+    .stTextInput > div > div > input:focus, .stSelectbox > div > div > div:focus {
+        border-color: var(--blue) !important;
+        box-shadow: 0 0 0 1px var(--blue) !important;
     }
 
-    .metric-value {
-        color: var(--text-main);
-        font-family: var(--font-title);
-        font-size: 2.2rem;
-        font-weight: 800;
-        margin-top: 10px;
-        line-height: 1;
-        letter-spacing: -0.03em;
-    }
-
-    .page-header {
-        margin-bottom: 30px;
-        padding-bottom: 22px;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .page-title {
-        font-family: var(--font-title);
-        font-size: clamp(32px, 4.2vw, 48px);
-        font-weight: 800;
-        color: var(--text-main);
-        margin: 0 0 8px 0;
-        letter-spacing: -0.03em;
-    }
-
-    .pdca-row-container {
-        background: var(--card-bg);
-        padding: 18px 20px;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-        margin-bottom: 8px;
-        box-shadow: 0 2px 8px rgba(21, 22, 32, 0.02);
-    }
-
-    .actions-bar {
-        background: var(--bg-color);
-        padding: 8px 16px;
-        border: 1px solid var(--border-color);
-        border-top: none;
-        border-radius: 0 0 12px 12px;
-        margin-bottom: 20px;
-        display: flex;
-        gap: 10px;
-    }
-
-    .badge {
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        display: inline-block;
-    }
-    .bg-gray { background: var(--bg-color); color: var(--text-muted); border: 1px solid var(--border-color); }
-    .bg-black { background: var(--green-soft); color: var(--green); border: 1px solid #b8efd8; }
-    .bg-red { background: var(--red-soft); color: var(--red); border: 1px solid #fecdd3; }
-    .bg-yellow { background: var(--amber-soft); color: var(--amber); border: 1px solid #f7d79d; }
-
-    .stButton > button {
+    /* Buttons */
+    .stButton > button, .stDownloadButton > button {
         border-radius: 8px !important;
         font-weight: 800 !important;
         font-family: var(--font-title) !important;
         text-transform: uppercase !important;
         letter-spacing: 0.03em !important;
+        min-height: 46px !important;
+        border: 1px solid var(--border-color) !important;
+        background-color: #FFF !important;
+        color: var(--text-main) !important;
     }
-    
-    .stButton > button[kind="primary"] {
+    .stButton > button[kind="primary"], .stFormSubmitButton > button {
         background-color: var(--primary-accent) !important;
         color: #FFF !important;
         border: none !important;
     }
+    .stButton > button:hover, .stFormSubmitButton > button:hover {
+        opacity: 0.9;
+        border-color: var(--text-muted) !important;
+    }
+
+    /* Custom UI Helpers */
+    .metric-box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 18px 20px; border-radius: 10px; min-height: 112px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(21, 22, 32, 0.02); }
+    .metric-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+    .metric-value { color: var(--text-main); font-family: var(--font-title); font-size: 2.2rem; font-weight: 800; margin-top: 10px; line-height: 1; letter-spacing: -0.03em; }
     
-    .alerta-box {
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-left: 4px solid var(--amber);
-        padding: 16px;
-        margin-bottom: 12px;
-        border-radius: 12px;
-        color: var(--text-main);
-    }
+    .page-header { margin-bottom: 30px; padding-bottom: 22px; border-bottom: 1px solid var(--border-color); }
+    .page-title { font-family: var(--font-title); font-size: clamp(32px, 4.2vw, 48px); font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; letter-spacing: -0.03em; }
+    
+    .pdca-row-container { background: var(--card-bg); padding: 18px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 8px; box-shadow: 0 2px 8px rgba(21, 22, 32, 0.02); }
+    .actions-bar { background: var(--bg-color); padding: 8px 16px; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 12px 12px; margin-bottom: 20px; display: flex; gap: 10px; }
+    
+    .badge { padding: 6px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; display: inline-block; }
+    .bg-gray { background: var(--bg-color); color: var(--text-muted); border: 1px solid var(--border-color); }
+    .bg-black { background: var(--green-soft); color: var(--green); border: 1px solid #b8efd8; }
+    .bg-red { background: var(--red-soft); color: var(--red); border: 1px solid #fecdd3; }
+    .bg-yellow { background: var(--amber-soft); color: var(--amber); border: 1px solid #f7d79d; }
 
-    /* Estilo para Itens de Execução */
-    .execution-item {
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        padding: 16px;
-        border-radius: 12px;
-        margin-bottom: 12px;
-    }
-
+    .alerta-box { background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--amber); padding: 16px; margin-bottom: 12px; border-radius: 12px; color: var(--text-main); }
+    .execution-item { background: var(--card-bg); border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; margin-bottom: 12px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -676,9 +618,9 @@ if "confirm_del" not in st.session_state: st.session_state.confirm_del = None
 
 if not st.session_state.usuario_logado:
     st.markdown("<br><br>", unsafe_allow_html=True)
-    c1, m, c3 = st.columns([1, 1.2, 1])
+    c1, m, c3 = st.columns([1, 1.5, 1])
     with m:
-        st.markdown("<div style='text-align:center; padding:20px; background:white; border-radius:10px; border:1px solid #DDD;'><h2>UNILUX</h2><p style='color:#666;letter-spacing:1px;font-size:0.8rem;'>INDUSTRIAL ACCESS</p></div>", unsafe_allow_html=True)
+        st.markdown("<div class='login-card'><h2>UNILUX</h2><p>INDUSTRIAL ACCESS</p></div>", unsafe_allow_html=True)
         with st.form("login_app"):
             ui = st.text_input("Usuário"); pi = st.text_input("Senha", type="password")
             if st.form_submit_button("ENTRAR", use_container_width=True, type="primary"):
