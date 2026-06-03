@@ -41,6 +41,12 @@ def get_client() -> Client:
             
         if not url or not key:
             raise RuntimeError("Credenciais do Supabase não encontradas no st.secrets nem no .env")
+            
+        # Auto-correção garantida independente da origem (st.secrets ou .env)
+        if "hwrt" in url:
+            url = url.replace("hwrt", "hwt")
+        if "uupk" in url:
+            url = url.replace("uupk", "upk")
                 
         _client = create_client(url, key)
     return _client
