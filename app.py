@@ -27,21 +27,34 @@ from migrar_para_supabase import migrar
 # 3. SISTEMA DE DESIGN INDUSTRIAL (CSS)
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap');
     
     :root {
-        --bg-color: #F3F4F6;
+        --bg-color: #f3f5f8;
         --sidebar-bg: #FFFFFF;
         --card-bg: #FFFFFF;
-        --primary-accent: #000000;
-        --secondary-accent: #4B5563;
-        --border-color: #E5E7EB;
-        --text-main: #111827;
-        --text-muted: #6B7280;
+        --primary-accent: #141620;
+        --secondary-accent: #667085;
+        --border-color: #dde3eb;
+        --text-main: #141620;
+        --text-muted: #667085;
+        
+        --red: #d92632;
+        --red-soft: #fff1f2;
+        --green: #079362;
+        --green-soft: #edfdf6;
+        --blue: #255ee8;
+        --blue-soft: #eef4ff;
+        --amber: #c98310;
+        --amber-soft: #fff8eb;
+        
+        --font-title: Montserrat, Aptos, "Segoe UI", -apple-system, sans-serif;
+        --font-body: Aptos, "Segoe UI", -apple-system, sans-serif;
     }
 
     html, body, [class*="css"], .stMarkdown {
-        font-family: 'Inter', sans-serif !important;
+        font-family: var(--font-body) !important;
+        color: var(--text-main);
     }
 
     .stApp {
@@ -56,126 +69,135 @@ st.markdown("""
         background-color: var(--sidebar-bg);
         border-right: 1px solid var(--border-color);
     }
-        background-color: var(--sidebar-bg);
-        border-right: 1px solid var(--border-color);
-    }
     
     .sidebar-header {
         padding: 20px 0;
-        border-bottom: 2px solid #000;
+        border-bottom: 1px solid var(--border-color);
         margin-bottom: 20px;
     }
 
     .brand-title {
+        font-family: var(--font-title);
         font-weight: 800;
         font-size: 1.5rem;
-        color: #000;
+        color: var(--text-main);
         margin: 0;
         letter-spacing: -1px;
     }
 
     .brand-subtitle {
+        font-family: var(--font-title);
         font-size: 0.7rem;
-        color: #666;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 2px;
     }
 
     .metric-box {
-        background: white;
-        border-left: 5px solid #000;
-        padding: 20px;
-        border-radius: 4px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 18px 20px;
+        border-radius: 10px;
+        min-height: 112px;
         margin-bottom: 10px;
+        box-shadow: 0 4px 12px rgba(21, 22, 32, 0.02);
     }
 
     .metric-label {
-        color: #6B7280;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 600;
     }
 
     .metric-value {
-        color: #000;
+        color: var(--text-main);
+        font-family: var(--font-title);
         font-size: 2.2rem;
         font-weight: 800;
-        margin-top: 5px;
+        margin-top: 10px;
+        line-height: 1;
+        letter-spacing: -0.03em;
     }
 
     .page-header {
         margin-bottom: 30px;
-        border-left: 8px solid #000;
-        padding-left: 20px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--border-color);
     }
 
     .page-title {
-        font-size: 2.2rem;
+        font-family: var(--font-title);
+        font-size: clamp(32px, 4.2vw, 48px);
         font-weight: 800;
-        color: #000;
-        margin: 0;
+        color: var(--text-main);
+        margin: 0 0 8px 0;
+        letter-spacing: -0.03em;
     }
 
     .pdca-row-container {
-        background: white;
-        padding: 18px 24px;
-        border-radius: 8px;
-        border: 1px solid #E5E7EB;
+        background: var(--card-bg);
+        padding: 18px 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
         margin-bottom: 8px;
+        box-shadow: 0 2px 8px rgba(21, 22, 32, 0.02);
     }
 
     .actions-bar {
-        background: #F9FAFB;
+        background: var(--bg-color);
         padding: 8px 16px;
-        border: 1px solid #E5E7EB;
+        border: 1px solid var(--border-color);
         border-top: none;
-        border-radius: 0 0 8px 8px;
+        border-radius: 0 0 12px 12px;
         margin-bottom: 20px;
         display: flex;
         gap: 10px;
     }
 
     .badge {
-        padding: 3px 10px;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 800;
         text-transform: uppercase;
+        display: inline-block;
     }
-    .bg-gray { background: #E5E7EB; color: #374151; border: 1px solid #999; }
-    .bg-black { background: #000; color: #FFF; }
-    .bg-red { background: #FEE2E2; color: #991B1B; border: 1px solid #F87171; }
-    .bg-yellow { background: #FEF3C7; color: #92400E; border: 1px solid #FBBF24; }
+    .bg-gray { background: var(--bg-color); color: var(--text-muted); border: 1px solid var(--border-color); }
+    .bg-black { background: var(--green-soft); color: var(--green); border: 1px solid #b8efd8; }
+    .bg-red { background: var(--red-soft); color: var(--red); border: 1px solid #fecdd3; }
+    .bg-yellow { background: var(--amber-soft); color: var(--amber); border: 1px solid #f7d79d; }
 
     .stButton > button {
-        border-radius: 4px !important;
-        font-weight: 600 !important;
+        border-radius: 8px !important;
+        font-weight: 800 !important;
+        font-family: var(--font-title) !important;
         text-transform: uppercase !important;
+        letter-spacing: 0.03em !important;
     }
     
     .stButton > button[kind="primary"] {
-        background-color: #000 !important;
+        background-color: var(--primary-accent) !important;
         color: #FFF !important;
         border: none !important;
     }
     
     .alerta-box {
-        background: #FFF;
-        border: 1px solid #F87171;
-        border-left: 5px solid #DC2626;
-        padding: 12px;
-        margin-bottom: 8px;
-        border-radius: 4px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-left: 4px solid var(--amber);
+        padding: 16px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        color: var(--text-main);
     }
 
     /* Estilo para Itens de Execução */
     .execution-item {
-        background: #FFFFFF;
-        border: 1px solid #EEE;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 10px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 12px;
     }
 
 </style>
@@ -186,7 +208,7 @@ def renderizar_header(titulo, subtitulo):
     st.markdown(f"""
     <div class="page-header">
         <h1 class="page-title">{titulo}</h1>
-        <p style='color: #6B7280; font-size: 1rem; margin-top: -5px;'>{subtitulo}</p>
+        <p style='color: var(--text-muted); font-size: 1rem; margin-top: 0;'>{subtitulo}</p>
     </div>
     """, unsafe_allow_html=True)
 
