@@ -241,7 +241,7 @@ def renderizar_sidebar():
         st.markdown("""
         <div class="sidebar-header">
             <div class="brand-title">UNILUX</div>
-            <div class="brand-subtitle">INDUSTRIAL SYSTEMS</div>
+            <div class="brand-subtitle">INDUSTRIAL SYSTEMS - V2</div>
         </div>
         """, unsafe_allow_html=True)
         
