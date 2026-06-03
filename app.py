@@ -183,14 +183,18 @@ def renderizar_sidebar():
         st.markdown("""
         <div class="sidebar-header">
             <div class="brand-title">UNILUX</div>
-            <div class="brand-subtitle">INDUSTRIAL SYSTEMS - V2</div>
+            <div class="brand-subtitle">Auditoria e Eficácia</div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        pages = [("📊  DASHBOARD", "dashboard"), ("➕  NOVO PROJETO", "novo_pdca"), ("📋  LISTA DE PDCAS", "lista_pdcas")]
+        pages = [
+            ("👁️  VISÃO GERAL", "visao_geral"), 
+            ("📋  AUDITORIA", "auditoria"), 
+            ("🗂️  GESTÃO", "gestao")
+        ]
         if st.session_state.usuario_logado.get("papel") == "admin":
-            pages.append(("⚙️  ADMINISTRAÇÃO", "admin"))
+            pages.append(("⚙️  SISTEMA", "sistema"))
             
         for label, key in pages:
             if st.button(label, key=f"nav_{key}", use_container_width=True, 
@@ -202,12 +206,12 @@ def renderizar_sidebar():
         st.markdown(f"<small style='color:#777'>USUÁRIO:</small><br><b>{st.session_state.usuario_logado['nome']}</b>", unsafe_allow_html=True)
         if st.button("🚪 SAIR", key="logout_btn", use_container_width=True):
             st.session_state.usuario_logado = None
-            st.session_state.pagina = "dashboard"
+            st.session_state.pagina = "visao_geral"
             st.rerun()
 
 # 6. PÁGINAS DO SISTEMA
 
-def pagina_dashboard():
+def pagina_visao_geral():
     renderizar_header("Painel de Performance", "VISÃO GERAL DA OPERAÇÃO")
     todos = listar_pdcas()
     andamento = [p for p in todos if p["status"] == "Em Andamento"]
@@ -273,7 +277,7 @@ def pagina_dashboard():
                 if st.button(f"🚩 {p['titulo']} (Resp: {p['responsavel']})", key=f"dash_atr_{p['id']}", use_container_width=True):
                     st.session_state.pdca_selecionado = p; st.session_state.pagina = "visualizar_pdca"; st.rerun()
 
-def pagina_novo_pdca():
+def pagina_gestao():
     renderizar_header("Planejamento", "NOVO CICLO PDCA")
     
     with st.form("form_novo", clear_on_submit=True):
@@ -312,7 +316,7 @@ def pagina_novo_pdca():
                 st.balloons()
             else: st.error("Título e Descrição são obrigatórios.")
 
-def pagina_lista_pdcas():
+def pagina_auditoria():
     renderizar_header("Repositório", "LISTA DE PDCAS")
     todos = listar_pdcas()
     
@@ -327,14 +331,20 @@ def pagina_lista_pdcas():
 
     if tipo_view == "📋 Lista":
         for p in filtrados:
+            status_color = "var(--green)" if p['status'] == "Concluído" else "var(--text-main)"
+            border_color = "var(--green)" if p['status'] == "Concluído" else "var(--border-color)"
+            bg_grad = "var(--card-bg)"
+            
             st.markdown(f"""
-            <div class="pdca-row-container" style='border-bottom:none; border-radius:8px 8px 0 0; margin-top:15px;'>
-                <div style='display:flex; justify-content: space-between;'>
-                    <span style='font-size:1.1rem; font-weight:700;'>{p['titulo']}</span>
+            <div style='background:{bg_grad}; border:1px solid {border_color}; border-left:4px solid {status_color}; border-radius:12px; padding:16px; margin-top:15px; border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom:none;'>
+                <div style='display:flex; justify-content: space-between; margin-bottom: 8px;'>
+                    <strong style='font-size:1.15rem; font-family:var(--font-title); color:var(--text-main);'>{p['titulo']}</strong>
                     <div>{b_status(p['status'])}</div>
                 </div>
-                <div style='font-size:0.85rem; color:#666;'>
-                    Resp: {p['responsavel']} | Prazo: {formatar_data(p['prazo'])} | {p['classificacao']}
+                <div style='display:flex; gap: 16px; font-size:0.85rem; color:var(--text-muted);'>
+                    <span>👤 Resp: <b>{p['responsavel']}</b></span>
+                    <span>⏰ Prazo: <b>{formatar_data(p['prazo'])}</b></span>
+                    <span>{b_classe(p['classificacao'])}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -392,7 +402,7 @@ def pagina_lista_pdcas():
 def pagina_realizar_pdca():
     p = st.session_state.pdca_selecionado
     renderizar_header(f"Execução: {p['titulo']}", "CADERNO DE CAMPO")
-    if st.button("← VOLTAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
+    if st.button("← VOLTAR"): st.session_state.pagina = "auditoria"; st.rerun()
     
     st.markdown(f"**Planejamento:** {p['planejar'].get('descricao', '')}")
     st.divider()
@@ -426,7 +436,7 @@ def pagina_realizar_pdca():
             registrar_realizacao(p['id'], respostas, final_obs, True, st.session_state.usuario_logado['nome'])
             st.success("PDCA Concluído com sucesso!")
             st.balloons()
-            st.session_state.pagina = "lista_pdcas"
+            st.session_state.pagina = "auditoria"
             st.rerun()
         else: 
             st.warning("É necessário confirmar o checklist marcando a caixa acima.")
@@ -435,13 +445,13 @@ def pagina_realizar_pdca():
         # Passando agora o usuário logado no 5º argumento
         registrar_realizacao(p['id'], respostas, final_obs, False, st.session_state.usuario_logado['nome'])
         st.warning("Ciclo registrado com pendências. PDCA reagendado para revisão.")
-        st.session_state.pagina = "lista_pdcas"
+        st.session_state.pagina = "auditoria"
         st.rerun()
 
 def pagina_visualizar_pdca():
     p = st.session_state.pdca_selecionado
     renderizar_header(p['titulo'], "CONSULTA DETALHADA")
-    if st.button("← VOLTAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
+    if st.button("← VOLTAR"): st.session_state.pagina = "auditoria"; st.rerun()
     
     st.write(f"**Líder:** {p['responsavel']} | **Prazo Final:** {formatar_data(p['prazo'])}")
     st.markdown(f"**Status:** {b_status(p['status'])} &nbsp; **Classe:** {b_classe(p['classificacao'])}", unsafe_allow_html=True)
@@ -481,7 +491,7 @@ def pagina_visualizar_pdca():
 def pagina_editar_pdca():
     p = st.session_state.pdca_selecionado
     renderizar_header(f"Editar: {p['titulo']}", "AJUSTE DO PLANEJAMENTO")
-    if st.button("← CANCELAR"): st.session_state.pagina = "lista_pdcas"; st.rerun()
+    if st.button("← CANCELAR"): st.session_state.pagina = "auditoria"; st.rerun()
     
     pl = p.get('planejar', {})
     with st.form("edit_master_full"):
@@ -521,10 +531,10 @@ def pagina_editar_pdca():
             }
             if atualizar_pdca(p['id'], novos_dados):
                 st.success("Atualizado!")
-                st.session_state.pagina = "lista_pdcas"; st.rerun()
+                st.session_state.pagina = "auditoria"; st.rerun()
             else: st.error("Erro ao salvar.")
 
-def pagina_admin():
+def pagina_sistema():
     renderizar_header("Administração", "CONTROLE E DADOS")
     t1, t2, t3, t4, t5 = st.tabs(["👥 Usuários", "➕ Novo Usuário", "📄 Importar Excel", "🔑 Meus Dados", "🛠️ Migração"])
     
@@ -612,7 +622,7 @@ def pagina_admin():
 
 # 15. MAIN APP ENTRY
 if "usuario_logado" not in st.session_state: st.session_state.usuario_logado = None
-if "pagina" not in st.session_state: st.session_state.pagina = "dashboard"
+if "pagina" not in st.session_state: st.session_state.pagina = "visao_geral"
 if "edit_user" not in st.session_state: st.session_state.edit_user = None
 if "confirm_del" not in st.session_state: st.session_state.confirm_del = None
 
@@ -631,9 +641,9 @@ if not st.session_state.usuario_logado:
 
 renderizar_sidebar()
 navegacao = {
-    "dashboard": pagina_dashboard, "novo_pdca": pagina_novo_pdca, "lista_pdcas": pagina_lista_pdcas,
+    "visao_geral": pagina_visao_geral, "gestao": pagina_gestao, "auditoria": pagina_auditoria,
     "realizar_pdca": pagina_realizar_pdca, "visualizar_pdca": pagina_visualizar_pdca,
-    "editar_pdca": pagina_editar_pdca, "admin": pagina_admin
+    "editar_pdca": pagina_editar_pdca, "sistema": pagina_sistema
 }
 if st.session_state.pagina in navegacao: navegacao[st.session_state.pagina]()
 st.markdown("<div style='text-align:center; padding:50px; color:#AAA; font-size:0.75rem;'>UNILUX INDUSTRIAL MANAGEMENT SYSTEM | 2024</div>", unsafe_allow_html=True)
