@@ -150,12 +150,12 @@ st.markdown("""
     /* Ajuste nos grupos da sidebar */
     .sidebar-nav-label {
         font-family: var(--font-title) !important;
-        font-weight: 800 !important;
-        font-size: 10px !important;
-        color: var(--faint) !important;
+        font-weight: 900 !important;
+        font-size: 16px !important;
+        color: var(--ink) !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.16em !important;
-        margin: 20px 0 6px 22px !important;
+        letter-spacing: 0.05em !important;
+        margin: 24px 0 10px 22px !important;
     }
 
     /* ── INPUTS ───────────────────────────────────────── */
