@@ -110,7 +110,7 @@ st.markdown("""
         justify-content: flex-start !important;
         font-size: 13px !important;
         font-weight: 600 !important;
-        font-family: var(--font-body) !important;
+        font-family: var(--font-title) !important;
         letter-spacing: 0 !important;
         min-height: 42px !important;
         border-radius: 0 !important;
@@ -126,6 +126,15 @@ st.markdown("""
         align-items: center !important;
         gap: 10px !important;
     }
+    section[data-testid="stSidebar"] .stButton > button p {
+        text-align: left !important;
+        margin: 0 !important;
+        width: 100% !important;
+        display: flex !important;
+        justify-content: flex-start !important;
+        font-family: var(--font-title) !important;
+        white-space: nowrap !important;
+    }
     section[data-testid="stSidebar"] .stButton > button:hover {
         background: var(--soft) !important;
         color: var(--ink) !important;
@@ -135,7 +144,18 @@ st.markdown("""
         color: var(--ink) !important;
         border-right: 3px solid var(--ink) !important;
         box-shadow: none !important;
-        font-weight: 700 !important;
+        font-weight: 800 !important;
+    }
+
+    /* Ajuste nos grupos da sidebar */
+    .sidebar-nav-label {
+        font-family: var(--font-title) !important;
+        font-weight: 800 !important;
+        font-size: 10px !important;
+        color: var(--faint) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.16em !important;
+        margin: 20px 0 6px 22px !important;
     }
 
     /* ── INPUTS ───────────────────────────────────────── */
@@ -208,7 +228,7 @@ st.markdown("""
         box-shadow: var(--shadow-card) !important;
     }
 
-    /* ── BOTÕES PRIMÁRIOS ─────────────────────────────── */
+    /* ── BOTÕES PRIMÁRIOS E SECUNDÁRIOS ────────────────── */
     .stButton > button, .stDownloadButton > button {
         border-radius: var(--radius-md) !important;
         font-weight: 800 !important;
@@ -222,15 +242,21 @@ st.markdown("""
         color: var(--ink) !important;
         transition: all 0.14s ease !important;
         padding: 0 20px !important;
+        white-space: nowrap !important;
+        min-width: max-content !important;
+    }
+    .stButton > button p {
+        white-space: nowrap !important;
+        margin: 0 !important;
     }
     .stButton > button:hover, .stDownloadButton > button:hover {
         background: var(--soft) !important;
-        border-color: var(--line) !important;
+        border-color: var(--ink) !important;
         color: var(--ink) !important;
     }
     .stButton > button[kind="primary"], .stFormSubmitButton > button {
         background: var(--ink) !important;
-        color: #fff !important;
+        color: #ffffff !important;
         border: 1px solid var(--ink) !important;
         box-shadow: none !important;
     }
@@ -1251,113 +1277,281 @@ def pagina_gestao():
 
 
 def pagina_auditoria():
-    renderizar_header("Projetos", "Gerencie e audite todos os PDCAs em andamento", "Auditoria")
+    renderizar_header("Projetos", "Cada projeto reúne objetivo, auditorias, desvios, ações, comprovações e histórico.", "Auditoria")
     todos = listar_pdcas()
-
-    c1, c2, c3 = st.columns([3, 2, 2])
-    with c1:
-        busca = st.text_input("Buscar por título...", placeholder="Digite para filtrar...")
-    with c2:
-        filtro_status = st.selectbox("Status", ["Todos", "Em Andamento", "Concluído", "Aguardando Novo Ciclo"])
-    with c3:
-        tipo_view = st.radio("Visualização", ["Lista", "Kanban"], horizontal=True, label_visibility="collapsed")
-
+    
+    # Busca
+    c_busca, c_count = st.columns([5, 1])
+    with c_busca:
+        busca = st.text_input("Buscar projeto por nome, área, responsável ou status", placeholder="Digite para filtrar...", label_visibility="collapsed")
+    
     filtrados = todos
     if busca:
         filtrados = [p for p in filtrados if busca.lower() in p['titulo'].lower()]
-    if filtro_status != "Todos":
-        filtrados = [p for p in filtrados if p['status'] == filtro_status]
+        
+    with c_count:
+        st.markdown(f"""
+        <div style="height:100%;display:flex;align-items:center;justify-content:flex-end;">
+            <span style="color:var(--blue);font-weight:700;font-size:14px;">{len(filtrados)} projeto(s)</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
 
-    st.markdown(f"<p style='color:var(--muted);font-size:0.85rem;margin-bottom:16px'>{len(filtrados)} projeto(s) encontrado(s)</p>", unsafe_allow_html=True)
-
+    # ── CARDS DE PROJETOS (Horizontal) ──
     hoje = datetime.now().date()
-
-    if tipo_view == "Lista":
-        st.markdown('<div class="task-list">', unsafe_allow_html=True)
-        for p in filtrados:
+    if not filtrados:
+        st.markdown('<p style="color:var(--muted)">Nenhum projeto encontrado.</p>', unsafe_allow_html=True)
+    else:
+        # Exibir os 4 primeiros como cards clicáveis via colunas
+        exibir = filtrados[:4]
+        cols_proj = st.columns(4)
+        for i, p in enumerate(exibir):
             try:
                 dias = (datetime.fromisoformat(p["prazo"]).date() - hoje).days
-                cls_row = "attention" if dias < 0 else ("warning" if dias <= 3 else ("success" if p['status'] == 'Concluído' else "info"))
+                if dias < 0:
+                    status_lbl = "Atrasado"
+                    cls_borda = "var(--red)"
+                    cls_bg = "var(--red-soft)"
+                    cls_txt = "var(--red)"
+                elif dias == 0:
+                    status_lbl = "Hoje"
+                    cls_borda = "var(--amber)"
+                    cls_bg = "var(--amber-soft)"
+                    cls_txt = "var(--amber)"
+                else:
+                    status_lbl = "Em dia"
+                    cls_borda = "var(--line)"
+                    cls_bg = "#ffffff"
+                    cls_txt = "var(--muted)"
             except:
-                cls_row = ""
+                status_lbl = ""
+                cls_borda = "var(--line)"
+                cls_bg = "#ffffff"
+                cls_txt = "var(--muted)"
 
-            st.markdown(f"""
-            <div class="task-row {cls_row}">
-                <div>
-                    <strong>{p['titulo']}</strong>
-                    <span>{p['responsavel']} · Prazo {formatar_data(p['prazo'])}</span>
+            with cols_proj[i]:
+                st.markdown(f"""
+                <div style="border:1px solid {cls_borda};border-radius:10px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:8px;height:100%;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <strong style="font-size:14px;color:var(--ink);line-height:1.2">{p['titulo']}</strong>
+                        <span style="background:{cls_bg};color:{cls_txt};font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;">{status_lbl}</span>
+                    </div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:auto">{p.get('classificacao','')} · {p['responsavel']}</div>
                 </div>
-                <div style="display:flex;gap:8px;align-items:center">
-                    {chip_status(p['status'])} {chip_classe(p['classificacao'])}
-                </div>
-            </div>""", unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
+                if st.button("Abrir Dossiê", key=f"abrir_{p['id']}", use_container_width=True):
+                    st.session_state.pdca_selecionado = p
+                    st.rerun()
 
-            cols = st.columns([1, 1, 1, 1, 5])
-            if cols[0].button("Realizar", key=f"re_{p['id']}"):
-                st.session_state.pdca_selecionado = p
+    st.divider()
+
+    # ── DOSSIÊ DO PROJETO SELECIONADO ──
+    p = st.session_state.get('pdca_selecionado')
+    if not p:
+        st.markdown('<p style="color:var(--muted);text-align:center;padding:40px">Selecione um projeto acima para ver o dossiê.</p>', unsafe_allow_html=True)
+        return
+
+    st.markdown('<div style="font-size:10px;font-weight:800;letter-spacing:0.16em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">DOSSIÊ</div>', unsafe_allow_html=True)
+    
+    c_titulo, c_botoes = st.columns([1.5, 1])
+    with c_titulo:
+        st.markdown(f'<h1 style="font-size:32px;font-weight:800;color:var(--ink);margin:0;line-height:1.1;letter-spacing:-0.03em">{p["titulo"]}</h1>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:var(--muted);font-size:14px;margin-top:8px">{p["planejar"].get("descricao", "Sem descrição.")}</p>', unsafe_allow_html=True)
+    with c_botoes:
+        c_b1, c_b2, c_b3 = st.columns([1,1,1])
+        with c_b1:
+            if st.button("AUDITAR", type="primary", use_container_width=True, key="dossie_auditar"):
                 st.session_state.pagina = "realizar_pdca"
                 st.rerun()
-            if cols[1].button("Ver", key=f"vi_{p['id']}"):
-                st.session_state.pdca_selecionado = p
-                st.session_state.pagina = "visualizar_pdca"
-                st.rerun()
-            if cols[2].button("Editar", key=f"ed_{p['id']}"):
-                st.session_state.pdca_selecionado = p
+        with c_b2:
+            if st.button("EDITAR", use_container_width=True, key="dossie_editar"):
                 st.session_state.pagina = "editar_pdca"
                 st.rerun()
-            if cols[3].button("Excluir", key=f"ex_{p['id']}"):
-                if st.session_state.get('confirm_del') == p['id']:
-                    remover_pdca(p['id'])
-                    st.rerun()
-                else:
-                    st.session_state.confirm_del = p['id']
-                    st.warning("⚠️ Clique novamente para confirmar a exclusão.")
-        st.markdown('</div>', unsafe_allow_html=True)
+        with c_b3:
+            if st.button("ARQUIVAR", use_container_width=True, key="dossie_arquivar"):
+                pass # Lógica de arquivar futuro
 
-    else:
-        # Kanban
-        agrupar = st.selectbox("Agrupar por", ["Status", "Classificação", "Responsável"])
-        map_key = {"Status": "status", "Classificação": "classificacao", "Responsável": "responsavel"}
-        key = map_key[agrupar]
+    st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+    
+    aba1, aba2, aba3, aba4, aba5 = st.tabs(["VISÃO GERAL", "AUDITORIAS", "DESVIOS", "AÇÕES", "HISTÓRICO"])
 
-        colunas_nomes = sorted(list(set([p[key] for p in filtrados])))
-        if not colunas_nomes and key == "status":
-            colunas_nomes = ["Em Andamento", "Concluído"]
+    with aba1:
+        # Métricas do Dossiê
+        try:
+            dias = (datetime.fromisoformat(p["prazo"]).date() - hoje).days
+            prazo_txt = formatar_data(p['prazo'])
+            if dias < 0: status_prazo = "Atrasado"
+            elif dias == 0: status_prazo = "Vence hoje"
+            else: status_prazo = f"Em {dias} dias"
+            cor_prazo = "var(--red-soft)" if dias < 0 else "var(--soft-strong)"
+            borda_prazo = "var(--red-border)" if dias < 0 else "var(--line)"
+        except:
+            prazo_txt = "N/A"
+            status_prazo = ""
+            cor_prazo = "var(--soft-strong)"
+            borda_prazo = "var(--line)"
 
-        cols_st = st.columns(max(len(colunas_nomes), 1))
-        for idx, col_nome in enumerate(colunas_nomes):
-            with cols_st[idx]:
-                count = len([p for p in filtrados if p[key] == col_nome])
-                st.markdown(f"""
-                <div style="margin-bottom:12px">
-                    <div style="font-family:var(--font-title);font-weight:800;font-size:14px;color:var(--ink)">{col_nome}</div>
-                    <div style="font-size:12px;color:var(--muted)">{count} projeto(s)</div>
-                </div>""", unsafe_allow_html=True)
+        topicos_count = len(p['planejar'].get('topicos', []))
+        hist_count = len(p.get('historico', []))
 
-                itens = [p for p in filtrados if p[key] == col_nome]
-                if not itens:
-                    st.markdown('<div style="color:var(--muted);font-size:0.82rem;font-style:italic;padding:8px 0">Vazio</div>', unsafe_allow_html=True)
-                for p in itens:
+        c_m1, c_m2, c_m3, c_m4 = st.columns(4)
+        c_m1.markdown(f"""
+        <div style="background:{cor_prazo};border:1px solid {borda_prazo};border-radius:8px;padding:16px;">
+            <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">PRÓXIMA</div>
+            <div style="font-size:20px;font-weight:800;color:var(--ink)">{prazo_txt}</div>
+            <div style="font-size:12px;color:var(--ink);margin-top:4px">{status_prazo}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        c_m2.markdown(f"""
+        <div style="background:var(--blue-soft);border:1px solid var(--blue-border);border-radius:8px;padding:16px;">
+            <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">CHECKLIST</div>
+            <div style="font-size:20px;font-weight:800;color:var(--ink)">{topicos_count}</div>
+            <div style="font-size:12px;color:var(--ink);margin-top:4px">itens ativos</div>
+        </div>
+        """, unsafe_allow_html=True)
+        c_m3.markdown(f"""
+        <div style="background:var(--green-soft);border:1px solid var(--green-border);border-radius:8px;padding:16px;">
+            <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">DESVIOS</div>
+            <div style="font-size:20px;font-weight:800;color:var(--ink)">0</div>
+            <div style="font-size:12px;color:var(--ink);margin-top:4px">em aberto</div>
+        </div>
+        """, unsafe_allow_html=True)
+        c_m4.markdown(f"""
+        <div style="background:var(--amber-soft);border:1px solid var(--amber-border);border-radius:8px;padding:16px;">
+            <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">COMPROVAÇÕES</div>
+            <div style="font-size:20px;font-weight:800;color:var(--ink)">{hist_count}</div>
+            <div style="font-size:12px;color:var(--ink);margin-top:4px">registradas</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+
+        # Alertas
+        if status_prazo == "Atrasado":
+            st.markdown(f"""
+            <div style="background:var(--red-soft);border:1px solid var(--red-border);border-radius:8px;padding:16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:16px">
+                <span style="color:var(--red);font-size:18px">⏰</span>
+                <div>
+                    <strong style="color:var(--ink);font-size:14px;display:block">Auditoria atrasada</strong>
+                    <span style="color:var(--ink);font-size:14px">Auditoria atrasada desde {prazo_txt}.</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Info Cards
+        c_i1, c_i2 = st.columns([2, 1])
+        with c_i1:
+            obj = p["planejar"].get("objetivo", "Nenhum padrão cadastrado.")
+            st.markdown(f"""
+            <div style="background:var(--soft-strong);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;align-items:flex-start;gap:12px;height:100%">
+                <span style="color:var(--blue);font-size:18px">🎯</span>
+                <div>
+                    <strong style="color:var(--ink);font-size:14px;display:block;margin-bottom:6px">Padrão esperado</strong>
+                    <span style="color:var(--muted);font-size:13px">{obj}</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with c_i2:
+            st.markdown(f"""
+            <div style="background:var(--red-soft);border:1px solid var(--red-border);border-radius:8px;padding:16px;display:flex;align-items:flex-start;gap:12px;height:100%">
+                <span style="color:var(--red);font-size:18px">📅</span>
+                <div>
+                    <strong style="color:var(--ink);font-size:14px;display:block;margin-bottom:6px">Próxima auditoria</strong>
+                    <span style="color:var(--muted);font-size:13px">Responsável: {p['responsavel']}. Frequência sugerida: 30 dias.</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
+
+        # Itens Monitorados
+        st.markdown("""
+        <h3 style="font-size:24px;font-weight:800;color:var(--ink);margin:0;letter-spacing:-0.03em">Itens monitorados</h3>
+        <p style="color:var(--muted);font-size:13px;margin-top:4px">O auditor verifica somente estes pontos. Itens inativados continuam no histórico.</p>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="background:var(--soft-strong);border:1px solid var(--line);border-radius:8px;padding:16px;margin:16px 0;">
+            <div style="display:flex;gap:16px">
+                <div style="flex:1">
+                    <label style="font-size:12px;font-weight:700;color:var(--ink)">Item verificado</label>
+                    <input type="text" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:4px;margin-top:4px" disabled>
+                </div>
+                <div style="flex:2">
+                    <label style="font-size:12px;font-weight:700;color:var(--ink)">Orientação para auditoria</label>
+                    <input type="text" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:4px;margin-top:4px" disabled>
+                </div>
+                <div style="display:flex;align-items:flex-end">
+                    <button disabled style="background:var(--ink);color:#fff;border:none;padding:10px 16px;border-radius:6px;font-weight:700;font-size:11px;letter-spacing:0.05em">ADICIONAR ITEM</button>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        topicos = p['planejar'].get('topicos', [])
+        if not topicos:
+            st.markdown('<p style="color:var(--muted)">Nenhum item monitorado.</p>', unsafe_allow_html=True)
+        else:
+            for i, t in enumerate(topicos):
+                # Usando colunas para os botões alinhados
+                c_item, c_btns = st.columns([3, 1])
+                with c_item:
                     st.markdown(f"""
-                    <div class="kanban-card">
-                        <div style="font-family:var(--font-title);font-weight:700;font-size:14px;margin-bottom:6px;color:var(--ink)">{p['titulo']}</div>
-                        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">{p['responsavel']} · {formatar_data(p['prazo'])}</div>
-                        <div style="display:flex;gap:6px;flex-wrap:wrap">{chip_status(p['status'])} {chip_classe(p['classificacao'])}</div>
-                    </div>""", unsafe_allow_html=True)
+                    <div style="padding:12px 0;border-bottom:1px solid var(--line-soft)">
+                        <strong style="font-size:14px;color:var(--ink);display:block">{t}</strong>
+                        <span style="font-size:12px;color:var(--muted)">Orientação padrão do sistema.</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with c_btns:
+                    # Simular botões de ação para o item
+                    st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+                    bc1, bc2, bc3 = st.columns(3)
+                    bc1.button("VERIFICAR", key=f"v_{i}", help="Verificar item")
+                    bc2.button("EDITAR", key=f"e_{i}", help="Editar item")
+                    bc3.button("INATIVAR", key=f"i_{i}", help="Inativar item")
 
-                    c_k1, c_k2, c_k3 = st.columns(3)
-                    if c_k1.button("▶", key=f"kre_{p['id']}", help="Realizar"):
-                        st.session_state.pdca_selecionado = p
-                        st.session_state.pagina = "realizar_pdca"
-                        st.rerun()
-                    if c_k2.button("👁", key=f"kvi_{p['id']}", help="Ver"):
-                        st.session_state.pdca_selecionado = p
-                        st.session_state.pagina = "visualizar_pdca"
-                        st.rerun()
-                    if c_k3.button("✏", key=f"ked_{p['id']}", help="Editar"):
-                        st.session_state.pdca_selecionado = p
-                        st.session_state.pagina = "editar_pdca"
-                        st.rerun()
+
+    with aba2:
+        st.info("Funcionalidade de aba em desenvolvimento.")
+    with aba3:
+        st.info("Funcionalidade de aba em desenvolvimento.")
+    with aba4:
+        st.info("Funcionalidade de aba em desenvolvimento.")
+    with aba5:
+        hist = p.get('historico', [])
+        if not hist:
+            st.markdown('<p style="color:var(--muted)">Nenhum ciclo registrado no histórico.</p>', unsafe_allow_html=True)
+        for h in reversed(hist):
+            usuario_h = h.get('usuario') or h.get('responsavel') or 'N/A'
+            resultado = h.get('resultado', 'N/A')
+            cls_res   = "success" if resultado == "OK" else "attention"
+            with st.expander(f"Ciclo em {formatar_data(h['data'])}  ·  Por {usuario_h}"):
+                obs = h.get('observacao_geral') or h.get('observacoes') or 'Sem observações.'
+                st.markdown(f"""
+                <div class="exec-item" style="margin-bottom:12px">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:var(--font-title)">Resultado</div>
+                    <div>{chip_status(resultado) if resultado not in ("OK","NOK") else f'<span class="chip {cls_res}">{resultado}</span>'}</div>
+                </div>
+                <div class="exec-item">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:var(--font-title)">Observações Gerais</div>
+                    <div style="font-size:0.88rem;color:var(--ink)">{obs}</div>
+                </div>""", unsafe_allow_html=True)
+                detalhes = h.get('detalhes_topicos') or h.get('comentarios_topicos')
+                if detalhes:
+                    st.markdown("<br>**Detalhamento por tópico:**")
+                    for t_nome, res in detalhes.items():
+                        icon = "✅" if res.get("status") == "Conforme" else "❌"
+                        obs_t = res.get('obs', 'S/C') or 'S/C'
+                        cls_item = "var(--green)" if res.get("status") == "Conforme" else "var(--red)"
+                        st.markdown(f"""
+                        <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line-soft)">
+                            <span style="color:{cls_item};font-size:1rem;flex-shrink:0">{icon}</span>
+                            <div>
+                                <div style="font-weight:700;font-size:0.85rem;color:var(--ink)">{t_nome}</div>
+                                <div style="font-size:0.8rem;color:var(--muted)">{obs_t}</div>
+                            </div>
+                        </div>""", unsafe_allow_html=True)
 
 
 def pagina_realizar_pdca():
@@ -1423,82 +1617,9 @@ def pagina_realizar_pdca():
 
 
 def pagina_visualizar_pdca():
-    p = st.session_state.pdca_selecionado
-    renderizar_header(p['titulo'], f"Líder: {p['responsavel']}  ·  Prazo: {formatar_data(p['prazo'])}", "Consulta Detalhada")
-
-    if st.button("← Voltar para Auditoria"):
-        st.session_state.pagina = "auditoria"
-        st.rerun()
-
-    st.markdown(f"""
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 20px">
-        {chip_status(p['status'])} {chip_classe(p['classificacao'])}
-    </div>""", unsafe_allow_html=True)
-
-    t_aba1, t_aba2, t_aba3 = st.tabs(["Planejamento", "Tópicos de Controle", "Histórico de Execuções"])
-
-    with t_aba1:
-        desc = p['planejar'].get('descricao', '')
-        obj  = p['planejar'].get('objetivo', '')
-        if desc:
-            st.markdown(f"""
-            <div class="exec-item" style="border-left:4px solid var(--red)">
-                <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:var(--font-title)">Problema / Descrição</div>
-                <div style="font-size:0.9rem;color:var(--ink)">{desc}</div>
-            </div>""", unsafe_allow_html=True)
-        if obj:
-            st.markdown(f"""
-            <div class="exec-item" style="border-left:4px solid var(--green)">
-                <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:var(--font-title)">Objetivo / Metas</div>
-                <div style="font-size:0.9rem;color:var(--ink)">{obj}</div>
-            </div>""", unsafe_allow_html=True)
-
-    with t_aba2:
-        tps = p['planejar'].get('topicos', [])
-        if tps:
-            for i, t in enumerate(tps):
-                st.markdown(f"""
-                <div class="exec-item" style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-                    <span style="background:var(--blue-soft);color:var(--blue);font-weight:800;font-size:12px;border-radius:999px;padding:5px 12px;flex-shrink:0;font-family:var(--font-title)">{i+1}</span>
-                    <span style="font-size:0.9rem;color:var(--ink)">{t}</span>
-                </div>""", unsafe_allow_html=True)
-        else:
-            st.markdown('<p style="color:var(--muted)">Nenhum tópico definido.</p>', unsafe_allow_html=True)
-
-    with t_aba3:
-        hist = p.get('historico', [])
-        if not hist:
-            st.markdown('<p style="color:var(--muted)">Nenhum ciclo registrado no histórico.</p>', unsafe_allow_html=True)
-        for h in reversed(hist):
-            usuario_h = h.get('usuario') or h.get('responsavel') or 'N/A'
-            resultado = h.get('resultado', 'N/A')
-            cls_res   = "success" if resultado == "OK" else "attention"
-            with st.expander(f"Ciclo em {formatar_data(h['data'])}  ·  Por {usuario_h}"):
-                obs = h.get('observacao_geral') or h.get('observacoes') or 'Sem observações.'
-                st.markdown(f"""
-                <div class="exec-item" style="margin-bottom:12px">
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:var(--font-title)">Resultado</div>
-                    <div>{chip_status(resultado) if resultado not in ("OK","NOK") else f'<span class="chip {cls_res}">{resultado}</span>'}</div>
-                </div>
-                <div class="exec-item">
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:var(--font-title)">Observações Gerais</div>
-                    <div style="font-size:0.88rem;color:var(--ink)">{obs}</div>
-                </div>""", unsafe_allow_html=True)
-                detalhes = h.get('detalhes_topicos') or h.get('comentarios_topicos')
-                if detalhes:
-                    st.markdown("<br>**Detalhamento por tópico:**")
-                    for t_nome, res in detalhes.items():
-                        icon = "✅" if res.get("status") == "Conforme" else "❌"
-                        obs_t = res.get('obs', 'S/C') or 'S/C'
-                        cls_item = "var(--green)" if res.get("status") == "Conforme" else "var(--red)"
-                        st.markdown(f"""
-                        <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line-soft)">
-                            <span style="color:{cls_item};font-size:1rem;flex-shrink:0">{icon}</span>
-                            <div>
-                                <div style="font-weight:700;font-size:0.85rem;color:var(--ink)">{t_nome}</div>
-                                <div style="font-size:0.8rem;color:var(--muted)">{obs_t}</div>
-                            </div>
-                        </div>""", unsafe_allow_html=True)
+    # Redireciona para a nova view de Dossiê unificada
+    st.session_state.pagina = "auditoria"
+    st.rerun()
 
 
 def pagina_editar_pdca():
