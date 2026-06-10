@@ -848,6 +848,49 @@ def renderizar_sidebar():
             st.rerun()
 
         st.markdown('<p class="sidebar-nav-label" style="margin-top:12px">Gestão</p>', unsafe_allow_html=True)
+        if st.button("Indicadores Globais", key="nav_indicadores", use_container_width=True,
+                     type="primary" if st.session_state.pagina == "indicadores" else "secondary"):
+            st.session_state.pagina = "indicadores"
+            st.rerun()
+        if st.button("Histórico Completo", key="nav_historico", use_container_width=True,
+                     type="primary" if st.session_state.pagina == "historico" else "secondary"):
+            st.session_state.pagina = "historico"
+            st.rerun()
+
+        st.markdown('<p class="sidebar-nav-label" style="margin-top:12px">Configurações</p>', unsafe_allow_html=True)
+        if st.button("Sistema e Permissões", key="nav_sistema", use_container_width=True,
+                     type="primary" if st.session_state.pagina == "sistema" else "secondary"):
+            st.session_state.pagina = "sistema"
+            st.rerun()
+
+        # Injeção bruta de CSS ao final do menu para evitar cache
+        st.markdown("""
+        <style>
+        [data-testid="stSidebar"] button {
+            text-align: left !important;
+            justify-content: flex-start !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            font-family: var(--font-title) !important;
+            border-radius: 0 !important;
+            padding-left: 22px !important;
+            min-height: 42px !important;
+        }
+        [data-testid="stSidebar"] button p, [data-testid="stSidebar"] button div {
+            text-align: left !important;
+            display: flex !important;
+            justify-content: flex-start !important;
+            width: 100% !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        [data-testid="stSidebar"] button[kind="primary"] {
+            background-color: #eeeeef !important;
+            border-right: 3px solid var(--ink) !important;
+            font-weight: 800 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         if st.button("Indicadores", key="nav_indicadores", use_container_width=True,
                      type="primary" if st.session_state.pagina == "indicadores" else "secondary"):
             st.session_state.pagina = "indicadores"
@@ -1298,51 +1341,53 @@ def pagina_auditoria():
         
     st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
 
-    # ── CARDS DE PROJETOS (Horizontal) ──
+    # ── CARDS DE PROJETOS (Grid Completo) ──
     hoje = datetime.now().date()
     if not filtrados:
         st.markdown('<p style="color:var(--muted)">Nenhum projeto encontrado.</p>', unsafe_allow_html=True)
     else:
-        # Exibir os 4 primeiros como cards clicáveis via colunas
-        exibir = filtrados[:4]
-        cols_proj = st.columns(4)
-        for i, p in enumerate(exibir):
-            try:
-                dias = (datetime.fromisoformat(p["prazo"]).date() - hoje).days
-                if dias < 0:
-                    status_lbl = "Atrasado"
-                    cls_borda = "var(--red)"
-                    cls_bg = "var(--red-soft)"
-                    cls_txt = "var(--red)"
-                elif dias == 0:
-                    status_lbl = "Hoje"
-                    cls_borda = "var(--amber)"
-                    cls_bg = "var(--amber-soft)"
-                    cls_txt = "var(--amber)"
-                else:
-                    status_lbl = "Em dia"
-                    cls_borda = "var(--line)"
-                    cls_bg = "#ffffff"
-                    cls_txt = "var(--muted)"
-            except:
-                status_lbl = ""
-                cls_borda = "var(--line)"
-                cls_bg = "#ffffff"
-                cls_txt = "var(--muted)"
+        # Exibir TODOS os projetos em formato de Grid com quebra de linha
+        for i in range(0, len(filtrados), 4):
+            cols_proj = st.columns(4)
+            for j in range(4):
+                if i + j < len(filtrados):
+                    p = filtrados[i + j]
+                    try:
+                        dias = (datetime.fromisoformat(p["prazo"]).date() - hoje).days
+                        if dias < 0:
+                            status_lbl = "Atrasado"
+                            cls_borda = "var(--red)"
+                            cls_bg = "var(--red-soft)"
+                            cls_txt = "var(--red)"
+                        elif dias == 0:
+                            status_lbl = "Hoje"
+                            cls_borda = "var(--amber)"
+                            cls_bg = "var(--amber-soft)"
+                            cls_txt = "var(--amber)"
+                        else:
+                            status_lbl = "Em dia"
+                            cls_borda = "var(--line)"
+                            cls_bg = "#ffffff"
+                            cls_txt = "var(--muted)"
+                    except:
+                        status_lbl = ""
+                        cls_borda = "var(--line)"
+                        cls_bg = "#ffffff"
+                        cls_txt = "var(--muted)"
 
-            with cols_proj[i]:
-                st.markdown(f"""
-                <div style="border:1px solid {cls_borda};border-radius:10px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:8px;height:100%;">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                        <strong style="font-size:14px;color:var(--ink);line-height:1.2">{p['titulo']}</strong>
-                        <span style="background:{cls_bg};color:{cls_txt};font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;">{status_lbl}</span>
-                    </div>
-                    <div style="font-size:11px;color:var(--muted);margin-top:auto">{p.get('classificacao','')} · {p['responsavel']}</div>
-                </div>
-                """, unsafe_allow_html=True)
-                if st.button("Abrir Dossiê", key=f"abrir_{p['id']}", use_container_width=True):
-                    st.session_state.pdca_selecionado = p
-                    st.rerun()
+                    with cols_proj[j]:
+                        st.markdown(f"""
+                        <div style="border:1px solid {cls_borda};border-radius:10px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:8px;height:100%;margin-bottom:12px">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                                <strong style="font-size:14px;color:var(--ink);line-height:1.2">{p['titulo']}</strong>
+                                <span style="background:{cls_bg};color:{cls_txt};font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;">{status_lbl}</span>
+                            </div>
+                            <div style="font-size:11px;color:var(--muted);margin-top:auto">{p.get('classificacao','')} · {p['responsavel']}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        if st.button("Abrir Dossiê", key=f"abrir_{p['id']}", use_container_width=True):
+                            st.session_state.pdca_selecionado = p
+                            st.rerun()
 
     st.divider()
 
@@ -1354,23 +1399,21 @@ def pagina_auditoria():
 
     st.markdown('<div style="font-size:10px;font-weight:800;letter-spacing:0.16em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">DOSSIÊ</div>', unsafe_allow_html=True)
     
-    c_titulo, c_botoes = st.columns([1.5, 1])
+    c_titulo, c_b1, c_b2, c_b3 = st.columns([3, 1, 1, 1])
     with c_titulo:
         st.markdown(f'<h1 style="font-size:32px;font-weight:800;color:var(--ink);margin:0;line-height:1.1;letter-spacing:-0.03em">{p["titulo"]}</h1>', unsafe_allow_html=True)
         st.markdown(f'<p style="color:var(--muted);font-size:14px;margin-top:8px">{p["planejar"].get("descricao", "Sem descrição.")}</p>', unsafe_allow_html=True)
-    with c_botoes:
-        c_b1, c_b2, c_b3 = st.columns([1,1,1])
-        with c_b1:
-            if st.button("AUDITAR", type="primary", use_container_width=True, key="dossie_auditar"):
-                st.session_state.pagina = "realizar_pdca"
-                st.rerun()
-        with c_b2:
-            if st.button("EDITAR", use_container_width=True, key="dossie_editar"):
-                st.session_state.pagina = "editar_pdca"
-                st.rerun()
-        with c_b3:
-            if st.button("ARQUIVAR", use_container_width=True, key="dossie_arquivar"):
-                pass # Lógica de arquivar futuro
+    with c_b1:
+        if st.button("AUDITAR", type="primary", use_container_width=True, key="dossie_auditar"):
+            st.session_state.pagina = "realizar_pdca"
+            st.rerun()
+    with c_b2:
+        if st.button("EDITAR", use_container_width=True, key="dossie_editar"):
+            st.session_state.pagina = "editar_pdca"
+            st.rerun()
+    with c_b3:
+        if st.button("ARQUIVAR", use_container_width=True, key="dossie_arquivar"):
+            pass # Lógica de arquivar futuro
 
     st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
     
