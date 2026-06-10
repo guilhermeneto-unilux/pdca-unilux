@@ -891,21 +891,7 @@ def renderizar_sidebar():
         }
         </style>
         """, unsafe_allow_html=True)
-        if st.button("Indicadores", key="nav_indicadores", use_container_width=True,
-                     type="primary" if st.session_state.pagina == "indicadores" else "secondary"):
-            st.session_state.pagina = "indicadores"
-            st.rerun()
-        if st.button("Histórico", key="nav_historico_global", use_container_width=True,
-                     type="primary" if st.session_state.pagina == "historico_global" else "secondary"):
-            st.session_state.pagina = "historico_global"
-            st.rerun()
 
-        if papel == "admin":
-            st.markdown('<p class="sidebar-nav-label" style="margin-top:12px">Sistema</p>', unsafe_allow_html=True)
-            if st.button("Configurações", key="nav_sistema", use_container_width=True,
-                         type="primary" if st.session_state.pagina == "sistema" else "secondary"):
-                st.session_state.pagina = "sistema"
-                st.rerun()
 
         papel_display = "Administrador" if papel == "admin" else "Operador"
         st.markdown(f"""
