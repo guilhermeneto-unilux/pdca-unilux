@@ -104,11 +104,11 @@ st.markdown("""
         max-width: 100% !important;
     }
 
-    /* ── SIDEBAR — BOTÕES NAV ────────────────────────── */
+    /* ── SIDEBAR — BOTÕES NAV ────────────────── */
     section[data-testid="stSidebar"] .stButton > button {
         text-align: left !important;
         justify-content: flex-start !important;
-        font-size: 0.85rem !important;
+        font-size: 13px !important;
         font-weight: 600 !important;
         font-family: var(--font-body) !important;
         letter-spacing: 0 !important;
@@ -119,9 +119,12 @@ st.markdown("""
         border-right: 3px solid transparent !important;
         color: #565d68 !important;
         transition: all 0.14s ease !important;
-        padding: 0 22px !important;
+        padding: 0 12px 0 22px !important;
         width: 100% !important;
         text-transform: none !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
     }
     section[data-testid="stSidebar"] .stButton > button:hover {
         background: var(--soft) !important;
@@ -132,6 +135,7 @@ st.markdown("""
         color: var(--ink) !important;
         border-right: 3px solid var(--ink) !important;
         box-shadow: none !important;
+        font-weight: 700 !important;
     }
 
     /* ── INPUTS ───────────────────────────────────────── */
@@ -802,34 +806,34 @@ def renderizar_sidebar():
 
         # Grupos de navegação
         st.markdown('<p class="sidebar-nav-label">Visão Geral</p>', unsafe_allow_html=True)
-        if st.button("  Acompanhamento", key="nav_visao_geral", use_container_width=True,
+        if st.button("Acompanhamento", key="nav_visao_geral", use_container_width=True,
                      type="primary" if st.session_state.pagina == "visao_geral" else "secondary"):
             st.session_state.pagina = "visao_geral"
             st.rerun()
 
         st.markdown('<p class="sidebar-nav-label" style="margin-top:12px">Auditoria</p>', unsafe_allow_html=True)
-        if st.button("  Projetos", key="nav_auditoria", use_container_width=True,
+        if st.button("Projetos", key="nav_auditoria", use_container_width=True,
                      type="primary" if st.session_state.pagina in ("auditoria", "realizar_pdca", "visualizar_pdca", "editar_pdca") else "secondary"):
             st.session_state.pagina = "auditoria"
             st.rerun()
-        if st.button("  Nova auditoria", key="nav_gestao", use_container_width=True,
+        if st.button("Nova auditoria", key="nav_gestao", use_container_width=True,
                      type="primary" if st.session_state.pagina == "gestao" else "secondary"):
             st.session_state.pagina = "gestao"
             st.rerun()
 
         st.markdown('<p class="sidebar-nav-label" style="margin-top:12px">Gestão</p>', unsafe_allow_html=True)
-        if st.button("  Indicadores", key="nav_indicadores", use_container_width=True,
+        if st.button("Indicadores", key="nav_indicadores", use_container_width=True,
                      type="primary" if st.session_state.pagina == "indicadores" else "secondary"):
             st.session_state.pagina = "indicadores"
             st.rerun()
-        if st.button("  Histórico", key="nav_historico_global", use_container_width=True,
+        if st.button("Histórico", key="nav_historico_global", use_container_width=True,
                      type="primary" if st.session_state.pagina == "historico_global" else "secondary"):
             st.session_state.pagina = "historico_global"
             st.rerun()
 
         if papel == "admin":
             st.markdown('<p class="sidebar-nav-label" style="margin-top:12px">Sistema</p>', unsafe_allow_html=True)
-            if st.button("  Configurações", key="nav_sistema", use_container_width=True,
+            if st.button("Configurações", key="nav_sistema", use_container_width=True,
                          type="primary" if st.session_state.pagina == "sistema" else "secondary"):
                 st.session_state.pagina = "sistema"
                 st.rerun()
@@ -855,156 +859,74 @@ def renderizar_sidebar():
 
 def pagina_visao_geral():
     todos = listar_pdcas()
+    hoje = datetime.now().date()
+
     andamento  = [p for p in todos if p["status"] == "Em Andamento"]
     concluidos = [p for p in todos if p["status"] == "Concluído"]
-    riscos     = [p for p in todos if p["classificacao"] == "Sobrevivência"]
+    atrasados  = [p for p in andamento if try_date_diff(p.get("prazo"), hoje) < 0]
+    hoje_count = len([p for p in andamento if try_date_diff(p.get("prazo"), hoje) == 0])
+    proximos   = obter_pdcas_proximos_prazo(7)
 
-    hoje = datetime.now().date()
-    atrasados, no_prazo = [], []
-    for p in andamento:
-        try:
-            p_dt = datetime.fromisoformat(p["prazo"]).date()
-            (atrasados if p_dt < hoje else no_prazo).append(p)
-        except:
-            no_prazo.append(p)
-
-    # vence hoje
-    vence_hoje = [p for p in andamento if p not in atrasados and
-                  len(no_prazo) > 0 and
-                  try_date_diff(p.get("prazo"), hoje) == 0]
-
-    proximos = obter_pdcas_proximos_prazo(7)
-
-    # ── Cabeçalho
     renderizar_header("Acompanhamento", "Comece pelo que precisa de decisão agora. O restante fica organizado por projeto.", "Visão Geral")
 
-    # ── Métricas (4 cards no estilo espelho)
+    # ── Métricas
     c1, c2, c3, c4 = st.columns(4)
+    c1.markdown(f'<div class="metric-card attention"><div class="metric-label">Atrasadas</div><strong class="metric-value">{len(atrasados)}</strong><span class="metric-sub">resolver primeiro</span></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="metric-card info"><div class="metric-label">Hoje</div><strong class="metric-value">{hoje_count}</strong><span class="metric-sub">rotina do dia</span></div>', unsafe_allow_html=True)
+    c3.markdown(f'<div class="metric-card warning"><div class="metric-label">Eficácia</div><strong class="metric-value">{len(concluidos)}</strong><span class="metric-sub">ações validadas</span></div>', unsafe_allow_html=True)
+    c4.markdown(f'<div class="metric-card neutral"><div class="metric-label">Fila Total</div><strong class="metric-value">{len(andamento)}</strong><span class="metric-sub">projetos ativos</span></div>', unsafe_allow_html=True)
 
-    with c1:
-        st.markdown(f"""
-        <div class="metric-card attention">
-            <div class="metric-label">Atrasadas</div>
-            <strong class="metric-value">{len(atrasados)}</strong>
-            <span class="metric-sub">resolver primeiro</span>
-        </div>""", unsafe_allow_html=True)
+    st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
 
-    hoje_count = len([p for p in andamento if try_date_diff(p.get("prazo"), hoje) == 0])
-    with c2:
-        st.markdown(f"""
-        <div class="metric-card info">
-            <div class="metric-label">Hoje</div>
-            <strong class="metric-value">{hoje_count}</strong>
-            <span class="metric-sub">rotina do dia</span>
-        </div>""", unsafe_allow_html=True)
+    # ── ROW 1: Próxima Ação (esq) + Fluxo Simples (dir)
+    col_proxima, col_fluxo = st.columns([1.55, 0.8])
 
-    with c3:
-        st.markdown(f"""
-        <div class="metric-card warning">
-            <div class="metric-label">Eficácia</div>
-            <strong class="metric-value">{len(concluidos)}</strong>
-            <span class="metric-sub">ações para validar</span>
-        </div>""", unsafe_allow_html=True)
+    item_urgente = None
+    cls_painel   = "success"
+    tipo_texto   = "Auditoria prevista"
+    if atrasados:
+        item_urgente = atrasados[0]
+        cls_painel   = "attention"
+        tipo_texto   = "Auditoria atrasada"
+    elif proximos:
+        item_urgente = proximos[0]
+        cls_painel   = "warning"
+        tipo_texto   = "Auditoria prevista"
+    elif andamento:
+        item_urgente = andamento[0]
+        cls_painel   = "success"
+        tipo_texto   = "Auditoria prevista"
 
-    fila_total = len(andamento)
-    with c4:
-        st.markdown(f"""
-        <div class="metric-card neutral">
-            <div class="metric-label">Fila Total</div>
-            <strong class="metric-value">{fila_total}</strong>
-            <span class="metric-sub">itens acionáveis</span>
-        </div>""", unsafe_allow_html=True)
-
-    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-
-    # ── Alertas — grid de 4 colunas no estilo espelho
-    if atrasados or proximos:
-        st.markdown("""
-        <div class="section-heading">
-            <h3>Alertas</h3>
-            <p>Vencimentos e validações que pedem atenção.</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # Montar lista de alertas para exibir em colunas
-        alertas_list = []
-        for p in atrasados[:4]:
-            try:
-                dias = (datetime.fromisoformat(p["prazo"]).date() - hoje).days
-                sub = f"Auditoria atrasada desde {formatar_data(p['prazo'])}."
-            except:
-                sub = f"Prazo: {formatar_data(p.get('prazo',''))}"
-            alertas_list.append(("high", "🔔", "Auditoria atrasada", p['titulo'], sub))
-
-        for p in proximos[:max(0, 4 - len(alertas_list))]:
-            try:
-                dias = (datetime.fromisoformat(p["prazo"]).date() - hoje).days
-                if dias == 0:
-                    sub = "Vence hoje!"
-                else:
-                    sub = f"Vence em {dias} dia(s) — {formatar_data(p['prazo'])}."
-            except:
-                sub = f"Prazo: {formatar_data(p.get('prazo',''))}"
-            alertas_list.append(("medium", "🔔", "Vence em breve", p['titulo'], sub))
-
-        if alertas_list:
-            cols = st.columns(min(len(alertas_list), 4))
-            for i, (cls, icon, tipo, titulo_a, sub) in enumerate(alertas_list[:4]):
-                with cols[i]:
-                    st.markdown(f"""
-                    <div class="alert-card {cls}">
-                        <span class="alert-type">{icon} {tipo}</span>
-                        <div class="alert-title">{titulo_a}</div>
-                        <div class="alert-sub">{sub}</div>
-                    </div>""", unsafe_allow_html=True)
-
-        st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-
-    # ── Dashboard grid: Próxima ação + Fluxo simples
-    left, right = st.columns([1.55, 0.8])
-
-    with left:
-        # Próxima ação — item mais urgente
-        item_urgente = None
-        if atrasados:
-            item_urgente = atrasados[0]
-            cls_painel = "attention"
-        elif proximos:
-            item_urgente = proximos[0]
-            cls_painel = "warning"
-        elif andamento:
-            item_urgente = andamento[0]
-            cls_painel = "success"
-
+    with col_proxima:
         if item_urgente:
             try:
                 dias = (datetime.fromisoformat(item_urgente["prazo"]).date() - hoje).days
                 if dias < 0:
-                    prazo_texto = f"Auditoria atrasada · prazo {formatar_data(item_urgente['prazo'])}"
+                    prazo_texto = f"prazo {formatar_data(item_urgente['prazo'])}"
                 elif dias == 0:
-                    prazo_texto = f"Vence hoje · prazo {formatar_data(item_urgente['prazo'])}"
+                    prazo_texto = f"vence hoje · {formatar_data(item_urgente['prazo'])}"
                 else:
-                    prazo_texto = f"Vence em {dias}d · prazo {formatar_data(item_urgente['prazo'])}"
+                    prazo_texto = f"prazo {formatar_data(item_urgente['prazo'])}"
             except:
-                prazo_texto = f"Prazo: {formatar_data(item_urgente.get('prazo',''))}"
+                prazo_texto = formatar_data(item_urgente.get("prazo", ""))
 
-            resp_texto = item_urgente.get('responsavel', '—')
+            resp_texto = item_urgente.get("responsavel", "—")
+            # Deixar o botão visualmente dentro do painel
             st.markdown(f"""
-            <div class="focus-panel {cls_painel}">
+            <div class="focus-panel {cls_painel}" style="padding-bottom:10px;">
                 <span class="focus-label">Próxima Ação</span>
                 <h2>{item_urgente['titulo']}</h2>
-                <p>{cls_painel == 'attention' and 'Auditoria atrasada' or 'Auditoria prevista'} · {resp_texto} · {prazo_texto}</p>
+                <p>{tipo_texto} · {resp_texto} · {prazo_texto}</p>
             </div>""", unsafe_allow_html=True)
-
-            st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+            
             c_btn1, c_btn2, _ = st.columns([1, 1, 3])
             with c_btn1:
-                if st.button("▶ Realizar", key="btn_realizar_urgente", type="primary"):
+                if st.button("AUDITAR →", key="btn_realizar_urgente", type="primary", use_container_width=True):
                     st.session_state.pdca_selecionado = item_urgente
                     st.session_state.pagina = "realizar_pdca"
                     st.rerun()
             with c_btn2:
-                if st.button("Ver detalhes", key="btn_ver_urgente"):
+                if st.button("Ver detalhes", key="btn_ver_urgente", use_container_width=True):
                     st.session_state.pdca_selecionado = item_urgente
                     st.session_state.pagina = "visualizar_pdca"
                     st.rerun()
@@ -1016,9 +938,9 @@ def pagina_visao_geral():
                 <p>Nenhuma auditoria vencida ou crítica no momento.</p>
             </div>""", unsafe_allow_html=True)
 
-    with right:
+    with col_fluxo:
         st.markdown("""
-        <div class="workflow-card">
+        <div class="workflow-card" style="height:100%;">
             <h3>Fluxo simples</h3>
             <ol>
                 <li>Auditar o que está vencido ou previsto para hoje.</li>
@@ -1028,81 +950,157 @@ def pagina_visao_geral():
             </ol>
         </div>""", unsafe_allow_html=True)
 
-    st.markdown("<div style='height:34px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:40px'></div>", unsafe_allow_html=True)
 
-    # ── Lista geral de projetos (abaixo do dashboard)
+    # ── ROW 2: Pendências atrasadas | Próximas pendências
+    col_atras, col_prox = st.columns(2)
+
+    with col_atras:
+        st.markdown("""
+        <div class="section-heading">
+            <h3 style="font-size:20px;letter-spacing:-0.03em;">Pendências atrasadas</h3>
+            <p style="font-size:13px;">O que já passou do prazo.</p>
+        </div>""", unsafe_allow_html=True)
+
+        if not atrasados:
+            st.markdown("""
+            <div style="border:1px solid var(--line);border-radius:10px;padding:20px;
+                        color:var(--muted);font-weight:600;font-size:14px;background:#fff">
+                Nenhuma pendência atrasada. ✓
+            </div>""", unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="task-list">', unsafe_allow_html=True)
+            for p in atrasados:
+                sub_txt = f"Auditoria atrasada · {p['responsavel']} · {formatar_data(p['prazo'])}"
+                
+                # Container simulando a linha da task
+                st.markdown(f"""
+                <div style="border:1px solid var(--line);border-left:4px solid var(--red);border-radius:10px;padding:12px 18px;margin-bottom:10px;background:#fff;display:flex;align-items:center;justify-content:space-between;">
+                    <div>
+                        <strong style="font-size:15px;display:block;color:var(--ink);">{p['titulo']}</strong>
+                        <span style="display:block;margin-top:2px;font-size:13px;color:var(--muted)">{sub_txt}</span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Streamlit não permite botão na mesma linha em HTML, então colocamos logo abaixo visualmente pequeno
+                c1_a, c2_a, c3_a = st.columns([2, 1, 0.5])
+                with c2_a:
+                    if st.button("AUDITAR", key=f"vg_aud_{p['id']}", type="primary", use_container_width=True):
+                        st.session_state.pdca_selecionado = p
+                        st.session_state.pagina = "realizar_pdca"
+                        st.rerun()
+                with c3_a:
+                    if st.button("→", key=f"vg_ver_{p['id']}", use_container_width=True):
+                        st.session_state.pdca_selecionado = p
+                        st.session_state.pagina = "visualizar_pdca"
+                        st.rerun()
+                st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+
+    with col_prox:
+        proximos_futuros = [p for p in proximos if p not in atrasados]
+        st.markdown("""
+        <div class="section-heading">
+            <h3 style="font-size:20px;letter-spacing:-0.03em;">Próximas pendências</h3>
+            <p style="font-size:13px;">De hoje até os próximos 7 dias.</p>
+        </div>""", unsafe_allow_html=True)
+
+        if not proximos_futuros:
+            st.markdown("""
+            <div style="border:1px dashed var(--line);border-radius:10px;padding:24px;
+                        color:var(--muted);font-weight:600;font-size:14px;background:#fafafa;text-align:center;">
+                Nenhuma pendência prevista para os próximos 7 dias.
+            </div>""", unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="task-list">', unsafe_allow_html=True)
+            for p in proximos_futuros:
+                sub_txt = f"Auditoria prevista · {p['responsavel']} · {formatar_data(p['prazo'])}"
+                st.markdown(f"""
+                <div style="border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:12px 18px;margin-bottom:10px;background:#fff;display:flex;align-items:center;justify-content:space-between;">
+                    <div>
+                        <strong style="font-size:15px;display:block;color:var(--ink);">{p['titulo']}</strong>
+                        <span style="display:block;margin-top:2px;font-size:13px;color:var(--muted)">{sub_txt}</span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                c1_p, c2_p, c3_p = st.columns([2, 1, 0.5])
+                with c2_p:
+                    if st.button("AUDITAR", key=f"vg_prx_aud_{p['id']}", type="primary", use_container_width=True):
+                        st.session_state.pdca_selecionado = p
+                        st.session_state.pagina = "realizar_pdca"
+                        st.rerun()
+                with c3_p:
+                    if st.button("→", key=f"vg_prx_ver_{p['id']}", use_container_width=True):
+                        st.session_state.pdca_selecionado = p
+                        st.session_state.pagina = "visualizar_pdca"
+                        st.rerun()
+                st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("<div style='height:40px'></div>", unsafe_allow_html=True)
+
+    # ── ROW 3: Últimas movimentações
     st.markdown("""
     <div class="section-heading">
-        <h3>Todos os projetos</h3>
-        <p>Ordenados por urgência de prazo.</p>
+        <h3 style="font-size:20px;letter-spacing:-0.03em;">Últimas movimentações</h3>
+        <p style="font-size:13px;">Separado para facilitar o controle gerencial.</p>
     </div>""", unsafe_allow_html=True)
 
-    todos_ordenados = sorted(todos, key=lambda x: x.get("prazo", "9999"), reverse=False)
+    historico_global = []
+    for p in todos:
+        for h in p.get("historico", []):
+            historico_global.append({**h, "_titulo": p["titulo"], "_resp": p["responsavel"]})
+    historico_global.sort(key=lambda x: x.get("data", ""), reverse=True)
 
-    if not todos_ordenados:
-        st.markdown('<p style="color:var(--muted);font-size:0.9rem">Nenhum projeto cadastrado ainda.</p>', unsafe_allow_html=True)
+    if not historico_global:
+        st.markdown("""
+        <div style="border:1px solid var(--line);border-radius:10px;padding:20px;
+                    color:var(--muted);font-weight:600;font-size:14px;background:#fff">
+            Nenhuma movimentação registrada ainda.
+        </div>""", unsafe_allow_html=True)
     else:
-        st.markdown('<div class="task-list">', unsafe_allow_html=True)
-        for p in todos_ordenados[:8]:
-            try:
-                dias = (datetime.fromisoformat(p["prazo"]).date() - hoje).days
-                if dias < 0:
-                    cls_row = "attention"
-                elif dias == 0:
-                    cls_row = "warning"
-                elif dias <= 7:
-                    cls_row = "warning"
-                else:
-                    cls_row = "info" if p["status"] == "Em Andamento" else "success"
-            except:
-                cls_row = ""
+        for h in historico_global[:8]:
+            resultado = h.get("resultado", "")
+            obs       = h.get("observacao_geral") or h.get("observacoes") or ""
+            usuario_h = h.get("usuario") or h.get("responsavel") or h.get("_resp", "")
+            data_h    = formatar_data(h.get("data", ""))
+            hora_h    = h.get("hora", "") or ""
+            projeto_h = h.get("_titulo", "")
+
+            if resultado == "OK":
+                cor_borda  = "var(--green)"
+                cor_icone  = "var(--green)"
+                tipo_label = "Auditoria registrada"
+            elif resultado in ("NOK",):
+                cor_borda  = "var(--amber)"
+                cor_icone  = "var(--amber)"
+                tipo_label = "Ação aguardando eficácia"
+            else:
+                cor_borda  = "var(--blue)"
+                cor_icone  = "var(--blue)"
+                tipo_label = "Projeto importado" if "importado" in obs.lower() else "Movimentação"
+
+            desc_txt = obs[:120] + ("…" if len(obs) > 120 else "") if obs else "Sem observações."
+            meta_txt = f"{data_h}, {hora_h} · {usuario_h} · {projeto_h}"
 
             st.markdown(f"""
-            <div class="task-row {cls_row}">
-                <div>
-                    <strong>{p['titulo']}</strong>
-                    <span>{p['responsavel']} · Prazo {formatar_data(p['prazo'])}</span>
+            <div style="
+                border:1px solid var(--line);
+                border-left:4px solid {cor_borda};
+                border-radius:10px;
+                background:#fff;
+                padding:16px 18px;
+                margin-bottom:10px;
+            ">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                    <span style="color:{cor_icone};font-size:15px">🕒</span>
+                    <strong style="font-size:14px;font-weight:700;color:var(--ink)">{tipo_label}</strong>
                 </div>
-                <div style="display:flex;gap:8px;align-items:center">
-                    {chip_status(p['status'])}
-                    {chip_classe(p['classificacao'])}
-                </div>
+                <div style="color:var(--muted);font-size:14px;line-height:1.4;margin-bottom:4px">{projeto_h}: {desc_txt}</div>
+                <div style="color:var(--faint);font-size:12px;font-weight:600">{meta_txt}</div>
             </div>""", unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        if len(todos_ordenados) > 8:
-            st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
-            if st.button("Ver todos os projetos →", key="vg_ver_todos"):
-                st.session_state.pagina = "auditoria"
-                st.rerun()
-
-    # ── Categorias (barras de progresso)
-    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-    st.markdown("""
-    <div class="section-heading">
-        <h3>Por categoria</h3>
-        <p>Distribuição dos projetos por classificação.</p>
-    </div>""", unsafe_allow_html=True)
-
-    categorias = [
-        ("Sobrevivência", "var(--red)",   "linear-gradient(90deg,#d92632,#ef4444)"),
-        ("Expansão",      "var(--amber)",  "linear-gradient(90deg,#c98310,#f59e0b)"),
-        ("Autonomia",     "var(--blue)",   "linear-gradient(90deg,#255ee8,#06b6d4)"),
-    ]
-    total = len(todos) or 1
-    for nome, cor, grad in categorias:
-        qtd = len([p for p in todos if p["classificacao"] == nome])
-        pct = int(qtd / total * 100)
-        st.markdown(f"""
-        <div class="progress-wrap">
-            <div class="progress-header">
-                <span>{nome}</span>
-                <b>{qtd}</b>
-            </div>
-            <div class="progress-track">
-                <div class="progress-fill" style="background:{grad};width:{pct}%"></div>
-            </div>
-        </div>""", unsafe_allow_html=True)
 
 
 def try_date_diff(data_iso, hoje):
