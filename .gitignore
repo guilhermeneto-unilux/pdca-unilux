@@ -1,23 +1,23 @@
-# Arquivos sensíveis — NUNCA subir pro GitHub
-.env
-usuarios.json
-
-# Planilhas de importação
-*.xlsx
-*.csv
-
-# Arquivos temporários
+# ── Python / Streamlit (legado — mantido apenas como referência) ──
+*.pyc
 __pycache__/
-*.py[cod]
-*.pyo
+.env
+.streamlit/secrets.toml
+venv/
+.venv/
+
+# ── Dados locais ──
+# pdcas.json  <- mantido como backup de dados
+
+# ── Sistema operacional ──
 .DS_Store
+Thumbs.db
 
-# Scripts de uso único (migração e importação)
-# Removidos do ignore pois são importados no app.py
-# migrar_para_supabase.py
-# importar_excel.py
-criar_tabelas.sql
-teste_importacao.xlsx
+# ── Editores ──
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# Pasta de anexos (gerada em runtime, não versionar)
-anexos/
+# ── Logs ──
+*.log
